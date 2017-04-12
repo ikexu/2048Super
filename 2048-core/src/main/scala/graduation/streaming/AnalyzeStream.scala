@@ -9,8 +9,23 @@ import scala.reflect.ClassTag
   */
 object AnalyzeStream extends Analyze {
 
-  override def analyze[K: ClassTag, V: ClassTag](stream: InputDStream[(K, V)]): Unit = {
+  override def analyzeStream[K: ClassTag, V: ClassTag](stream: InputDStream[(K, V)]): Unit = {
+
+    val processedStream = transform(stream)
+    processedStream.foreachRDD { rdd =>
+      rdd.foreach { kv =>
+        analyze(kv)
+      }
+    }
 
   }
 
+  override def analyze[K: ClassTag, V: ClassTag](kv: (K, V)): Unit = {
+
+  }
+
+  private def transform[K: ClassTag, V: ClassTag](stream: InputDStream[(K, V)]): InputDStream[(K, V)] = {
+
+    stream
+  }
 }

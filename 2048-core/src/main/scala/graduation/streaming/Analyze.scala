@@ -9,6 +9,8 @@ import scala.reflect.ClassTag
   */
 trait Analyze {
 
-  def analyze[K: ClassTag, V: ClassTag](stream: InputDStream[(K, V)])
+  def analyzeStream[K: ClassTag, V: ClassTag](stream: InputDStream[(K, V)])
+
+  def analyze[K: ClassTag, V: ClassTag](kv: (K, V))
 
 }
