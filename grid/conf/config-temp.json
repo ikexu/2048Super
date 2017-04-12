@@ -1,0 +1,10 @@
+{
+  "port": 8001,
+  "mongodb": {
+    "url": "127.0.0.1:27017",
+    "username": "",
+    "password": ""
+	   "databaseName":"2048",
+	   "collectionName":"game_record",
+  }
+}
