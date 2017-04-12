@@ -1,4 +1,4 @@
-package com.kexu.graduation.util;
+package graduation.util;
 
 /**
  * Created by KeXu on 2017/4/10.

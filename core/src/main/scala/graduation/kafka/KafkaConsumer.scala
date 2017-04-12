@@ -1,4 +1,4 @@
-package com.kexu.graduation.kafka
+package graduation.kafka
 
 class KafkaConsumer(zkQuorum: String, group: String, topic: String, partition: Int, maxBatchByteSize: Int) {
   private val kac: KafkaSimpleConsumer = new KafkaSimpleConsumer(zkQuorum, group, topic, partition, maxBatchByteSize)

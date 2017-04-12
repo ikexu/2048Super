@@ -1,5 +1,4 @@
-package com.kexu.graduation.kafka
-
+package graduation.kafka
 
 import kafka.api.{FetchRequestBuilder, TopicMetadataRequest}
 import kafka.common.TopicAndPartition

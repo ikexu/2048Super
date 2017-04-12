@@ -1,4 +1,4 @@
-package com.kexu.graduation.kafka
+package graduation.kafka
 
 import java.util.Properties
 

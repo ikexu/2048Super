@@ -1,4 +1,4 @@
-package com.kexu.graduation
+package graduation
 
 /**
   * Created by KeXu on 2017/4/10.
@@ -6,7 +6,7 @@ package com.kexu.graduation
 object test {
 
   def main(args: Array[String]): Unit = {
-
+println(1)
   }
 
 }
