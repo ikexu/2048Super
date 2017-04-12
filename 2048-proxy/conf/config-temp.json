@@ -1,0 +1,4 @@
+{
+  "port": 9001,
+		"kafka": "localhost:9092"
+}
