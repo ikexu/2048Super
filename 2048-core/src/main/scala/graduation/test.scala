@@ -6,7 +6,7 @@ package graduation
 object test {
 
   def main(args: Array[String]): Unit = {
-println(1)
+    println(1)
   }
 
 }
