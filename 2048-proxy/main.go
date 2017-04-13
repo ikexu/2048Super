@@ -36,6 +36,7 @@ func computer(ctx *iris.Context) {
 		log.Println("Read json error:", err.Error())
 		return
 	}
+	r.UUID = shortuuid.New()
 	if err := sendKafka(r); err != nil {
 		ctx.JSON(iris.StatusOK, Resp{
 			Code:    01,
@@ -43,13 +44,13 @@ func computer(ctx *iris.Context) {
 		})
 		return
 	}
-	if err := readKafka(r); err != nil {
-		ctx.JSON(iris.StatusOK, Resp{
-			Code:    01,
-			Message: err.Error(),
-		})
-		return
-	}
+	//if err := readKafka(r); err != nil {
+	//ctx.JSON(iris.StatusOK, Resp{
+	//Code:    01,
+	//Message: err.Error(),
+	//})
+	//return
+	//}
 	ctx.JSON(iris.StatusOK, Resp{
 		Code:    00,
 		Message: "Success!",

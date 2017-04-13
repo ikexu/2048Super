@@ -2,7 +2,7 @@ package main
 
 type Record struct {
 	Grid [][]int `json:"grid"`
-	UUID string  `json:"-"`
+	UUID string  `json:"uuid"`
 }
 
 type Resp struct {
