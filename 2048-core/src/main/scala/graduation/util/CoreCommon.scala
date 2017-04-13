@@ -43,4 +43,9 @@ object CoreCommon {
     ssc.checkpoint(coreStreamingCheckPoint)
     ssc
   }
+
+  def splitJsonMessage(message:String):Grid={
+
+    new Grid("")
+  }
 }

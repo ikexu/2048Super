@@ -29,7 +29,7 @@ object StreamingStart {
     val stream = ks.createStringStream(ssc)
 
     //分析
-    AnalyzeStream.analyze[String, String](stream)
+    AnalyzeStream.analyzeStream[String, String](stream)
 
     ssc.start()
     ssc.awaitTermination()
