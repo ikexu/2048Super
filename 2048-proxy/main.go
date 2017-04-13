@@ -14,6 +14,7 @@ import (
 	"github.com/renstrom/shortuuid"
 )
 
+// Define topic
 const (
 	ComputerTopic = "computer-topic"
 	ReturnTopic   = "return-topic"
@@ -55,6 +56,7 @@ func computer(ctx *iris.Context) {
 	})
 }
 
+// Send message to kafka
 func sendKafka(r *Record) error {
 	producer, err := sarama.NewSyncProducer(strings.Split(conf.Kafka, ","), nil)
 	if err != nil {
@@ -71,10 +73,9 @@ func sendKafka(r *Record) error {
 	bts, _ := json.Marshal(r)
 
 	msg := &sarama.ProducerMessage{
-		Topic:     ComputerTopic,
-		Key:       sarama.StringEncoder(r.UUID),
-		Value:     sarama.StringEncoder(string(bts)),
-		Partition: 0,
+		Topic: ComputerTopic,
+		Key:   sarama.StringEncoder(r.UUID),
+		Value: sarama.StringEncoder(string(bts)),
 	}
 	_, _, err = producer.SendMessage(msg)
 	if err != nil {
@@ -84,6 +85,7 @@ func sendKafka(r *Record) error {
 	return nil
 }
 
+// Read message from kafka
 func readKafka(r *Record) error {
 	consumer, err := sarama.NewConsumer(strings.Split(conf.Kafka, ","), nil)
 	if err != nil {
@@ -96,7 +98,7 @@ func readKafka(r *Record) error {
 		}
 	}()
 
-	partitionConsumer, err := consumer.ConsumePartition(ComputerTopic, 0, sarama.OffsetOldest)
+	partitionConsumer, err := consumer.ConsumePartition(ReturnTopic, 0, sarama.OffsetOldest)
 	if err != nil {
 		return err
 	}
