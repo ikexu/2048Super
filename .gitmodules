@@ -1,0 +1,3 @@
+[submodule "2048-index"]
+	path = 2048-index
+	url = https://github.com/xwjdsh/2048
