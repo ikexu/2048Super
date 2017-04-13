@@ -1,7 +1,8 @@
 .idea
-2048-grid/grid
-2048-grid/conf/config.json
 2048Super.iml
+target
+2048-grid/2048-grid
+2048-grid/conf/config.json
 2048-core/2048-core.iml
 2048-core/target/
 2048-proxy/2048-proxy
