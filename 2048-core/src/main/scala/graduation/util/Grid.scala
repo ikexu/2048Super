@@ -6,6 +6,7 @@ package graduation.util
 class Grid(uuid:String) extends Serializable{
 
   val data:Array[Array[Int]]=Array.ofDim[Int](2,4)
+  var isPeopleOperate=true
 
   def getRow(rowIndex:Int):(Int,Int,Int,Int)={
 
@@ -16,6 +17,15 @@ class Grid(uuid:String) extends Serializable{
   def getCol(colIndex:Int):(Int,Int,Int,Int)={
     (data(0)(colIndex),data(1)(colIndex),data(2)(colIndex),data(3)(colIndex))
   }
+
+  /**
+    * 玩家切换
+    * @return
+    */
+  def playerCutover():Boolean={
+    isPeopleOperate = !isPeopleOperate
+  }
+
 
 }
 
