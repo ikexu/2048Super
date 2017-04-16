@@ -1,12 +1,14 @@
 package graduation.algorithm
 
+import org.apache.spark.mllib.classification.LogisticRegressionWithLBFGS
+
 /**
   * Created by KeXu on 2017/4/10.
   */
 class test {
 
   def main(args: Array[String]): Unit = {
-    println(1)
+    val model =new LogisticRegressionWithLBFGS()
   }
 
 }

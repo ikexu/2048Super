@@ -6,22 +6,18 @@ package graduation.util
 class Grid(uuid:String) extends Serializable{
 
   val id:String=uuid
-  var col1:(Int,Int,Int,Int)= _
-  var col2:(Int,Int,Int,Int)= _
-  var col3:(Int,Int,Int,Int)= _
-  var col4:(Int,Int,Int,Int)= _
+  val data:Array[Array[Int]]=Array.ofDim[Int](2,4)
 
-  def setCol1(col:(Int,Int,Int,Int)):Unit={
-    col1=col
+
+
+  def getRow(rowIndex:Int):(Int,Int,Int,Int)={
+
+    val row=data(rowIndex)
+    (row(0),row(1),row(2),row(3))
   }
-  def setCol2(col:(Int,Int,Int,Int)):Unit={
-    col2=col
-  }
-  def setCol3(col:(Int,Int,Int,Int)):Unit={
-    col3=col
-  }
-  def setCol4(col:(Int,Int,Int,Int)):Unit={
-    col4=col
+
+  def getCol(colIndex:Int):(Int,Int,Int,Int)={
+    (data(0)(colIndex),data(1)(colIndex),data(2)(colIndex),data(3)(colIndex))
   }
 
 }
