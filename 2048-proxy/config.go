@@ -11,14 +11,23 @@ var (
 
 // This models match config option
 type config struct {
-	Port  int    `json:"port"`
-	Kafka string `json:"kafka"`
+	Port    int         `json:"port"`
+	Kafka   string      `json:"kafka"`
+	Mongodb mongoConfig `json:"mongodb"`
+}
+
+type mongoConfig struct {
+	Host       string `json:"host"`
+	Username   string `json:"username"`
+	Password   string `json:"password"`
+	Database   string `json:"database"`
+	Collection string `json:"collection"`
 }
 
 func init() {
-	file, err := ioutil.ReadFile("conf/config.json")
+	file, err := ioutil.ReadFile("config.json")
 	if err != nil {
-		panic("Make sure 'conf/config.json' file exists!")
+		panic("Make sure 'config.json' file exists!")
 	}
 
 	err = json.Unmarshal(file, &conf)

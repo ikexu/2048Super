@@ -1,5 +1,6 @@
 {
-  "port": 8001,
+  "port": 9001,
+		"kafka": "localhost:9092",
   "mongodb": {
     "url": "127.0.0.1:27017",
     "username": "",

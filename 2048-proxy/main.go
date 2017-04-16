@@ -1,17 +1,15 @@
 package main
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
-	"log"
 	"strings"
+	"time"
 
-	"github.com/Shopify/sarama"
+	mgo "gopkg.in/mgo.v2"
+
 	"github.com/iris-contrib/middleware/cors"
 	"github.com/iris-contrib/middleware/logger"
 	"github.com/kataras/iris"
-	"github.com/renstrom/shortuuid"
 )
 
 // Define topic
@@ -20,111 +18,34 @@ const (
 	ReturnTopic   = "return-topic"
 )
 
+var session *mgo.Session
+
 func main() {
+	initDB()
+	defer session.Close()
 
 	api := iris.New()
 	api.Use(cors.Default())
 	api.Use(logger.New())
-	api.Post("/", computer)
+	api.Post("/compute", compute)
+	api.Post("/record", record)
 
 	api.Listen(fmt.Sprintf(":%d", conf.Port))
 }
 
-func computer(ctx *iris.Context) {
-	r := &Record{}
-	if err := ctx.ReadJSON(r); err != nil {
-		log.Println("Read json error:", err.Error())
-		return
+// Init mongodb connecion
+func initDB() {
+	mongodb := conf.Mongodb
+	info := &mgo.DialInfo{
+		Addrs:    strings.Split(mongodb.Host, ","),
+		Timeout:  60 * time.Second,
+		Username: mongodb.Username,
+		Password: mongodb.Password,
 	}
-	r.UUID = shortuuid.New()
-	if err := sendKafka(r); err != nil {
-		ctx.JSON(iris.StatusOK, Resp{
-			Code:    01,
-			Message: err.Error(),
-		})
-		return
-	}
-	//if err := readKafka(r); err != nil {
-	//ctx.JSON(iris.StatusOK, Resp{
-	//Code:    01,
-	//Message: err.Error(),
-	//})
-	//return
-	//}
-	ctx.JSON(iris.StatusOK, Resp{
-		Code:    00,
-		Message: "Success!",
-	})
-}
 
-// Send message to kafka
-func sendKafka(r *Record) error {
-	producer, err := sarama.NewSyncProducer(strings.Split(conf.Kafka, ","), nil)
+	var err error
+	session, err = mgo.DialWithInfo(info)
 	if err != nil {
-		log.Fatalln(err)
-		return err
+		panic("Connnect mongodb error:" + err.Error())
 	}
-	defer func() {
-		if err := producer.Close(); err != nil {
-			log.Fatalln(err)
-		}
-	}()
-
-	r.UUID = shortuuid.New()
-	bts, _ := json.Marshal(r)
-
-	msg := &sarama.ProducerMessage{
-		Topic: ComputerTopic,
-		Key:   sarama.StringEncoder(r.UUID),
-		Value: sarama.StringEncoder(string(bts)),
-	}
-	_, _, err = producer.SendMessage(msg)
-	if err != nil {
-		log.Println("Send message error:", err.Error())
-		return err
-	}
-	return nil
-}
-
-// Read message from kafka
-func readKafka(r *Record) error {
-	consumer, err := sarama.NewConsumer(strings.Split(conf.Kafka, ","), nil)
-	if err != nil {
-		return err
-	}
-
-	defer func() {
-		if err := consumer.Close(); err != nil {
-			log.Fatalln(err)
-		}
-	}()
-
-	partitionConsumer, err := consumer.ConsumePartition(ReturnTopic, 0, sarama.OffsetOldest)
-	if err != nil {
-		return err
-	}
-
-	defer func() {
-		if err := partitionConsumer.Close(); err != nil {
-			log.Fatalln(err)
-		}
-	}()
-
-	// Trap SIGINT to trigger a shutdown.
-	signals := make(chan bool, 1)
-
-	err = errors.New("time out or interrupt!")
-ConsumerLoop:
-	for {
-		select {
-		case msg := <-partitionConsumer.Messages():
-			err = nil
-			log.Println(msg)
-			// Handle message
-			signals <- true
-		case <-signals:
-			break ConsumerLoop
-		}
-	}
-	return err
 }
