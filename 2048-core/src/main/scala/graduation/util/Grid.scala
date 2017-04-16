@@ -19,7 +19,7 @@ class Grid(uuid:String) extends Serializable{
 
 }
 
-object GridDirect extends Enumeration{
+object GridDirect extends Enumeration with Serializable{
 
   type GridDirect=Value
   val Up=Value(0)
