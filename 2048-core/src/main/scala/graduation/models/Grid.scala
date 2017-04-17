@@ -24,6 +24,14 @@ class Grid(val k:String, val p:Boolean,val s:Int,var d:Array[Array[Int]]) extend
     (data(0)(colIndex),data(1)(colIndex),data(2)(colIndex),data(3)(colIndex))
   }
 
+  /**
+    * 玩家切换
+    * @return
+    */
+  def playerCutover():Boolean={
+    playerTurn = !playerTurn
+  }
+
 }
 
 
