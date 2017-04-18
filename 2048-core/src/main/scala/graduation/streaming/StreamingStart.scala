@@ -18,7 +18,7 @@ object StreamingStart {
     val ssc: StreamingContext = CoreCommon.instanceStreaming(spark)
 
     val kafkaParams: Map[String, String] = Map(
-      "metadata.broker.list" -> "localhost:9091"
+      "metadata.broker.list" -> CoreCommon.kafkaBroker
     )
 
     val topics: Set[String] = Set(
@@ -26,6 +26,7 @@ object StreamingStart {
     )
 
     val ks = new KafkaStream(kafkaParams, topics)
+
     val stream = ks.createStringStream(ssc)
 
     //分析

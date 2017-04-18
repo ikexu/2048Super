@@ -11,6 +11,7 @@ object CoreCommon {
   val receveTopic: String = ""
   private val coreAppName = "2048Super-Core"
   private val coreStreamingCheckPoint = "."
+  val kafkaBroker:String ="localhost:9091"
 
   /**
     * get [[SparkContext]] instance
