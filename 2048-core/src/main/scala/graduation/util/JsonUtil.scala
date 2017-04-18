@@ -1,30 +1,25 @@
 package graduation.util
 
-import scala.util.parsing.json.JSON
+import graduation.models.Grid._
+import graduation.models.Grid
+import graduation.models.Result
+import argonaut._, Argonaut._
+
+
 /**
   * Created by KeXu on 2017/4/13.
   */
 object JsonUtil {
 
-
-  def parseFull(json:String):Map[String, String]={
-
-    val parsed=JSON.parseFull(json)
-    parsed match {
-      case Some(data:Map[String, String]) => data
-      case None =>  null
-    }
-  }
-
   def main(args: Array[String]): Unit = {
-    val json=
-      s"""
-         |{
-         |  "grid":[[0,2,0,4],[0,0,8,0],[4,0,0,0],[2,0,0,0]],
-         |  "uuid":"Cekw67uyMpBGZLRP2HFVbe"
-         |}
-       """.stripMargin
-    parseFull(json).foreach(println(_))
+    var jsonStr="""{"data":[[1,2,3,4],[0,0,0,0],[0,0,0,0],[0,0,0,0]],"step":10,"playerTurn":true,"key":"test"}"""
+    var grid=jsonStr.decodeOption[Grid].get
+    println(grid.key,grid.playerTurn,grid.step,grid.data.deep.mkString(" "))
+
+    val r=Result("test2",10,Grid.UP)
+    println(r.asJson.toString())
+
+
   }
 
 }
