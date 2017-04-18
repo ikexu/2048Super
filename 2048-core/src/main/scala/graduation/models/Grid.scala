@@ -30,6 +30,7 @@ class Grid(val k:String, val p:Boolean,val s:Int,var d:Array[Array[Int]]) extend
     */
   def playerCutover():Boolean={
     playerTurn = !playerTurn
+    playerTurn
   }
 
 }
