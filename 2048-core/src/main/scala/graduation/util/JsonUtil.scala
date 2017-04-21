@@ -12,8 +12,20 @@ import argonaut._, Argonaut._
 object JsonUtil {
 
   def main(args: Array[String]): Unit = {
-    var jsonStr="""{"data":[[1,2,3,4],[0,0,0,0],[0,0,0,0],[0,0,0,0]],"step":10,"playerTurn":true,"key":"test"}"""
-    var grid=jsonStr.decodeOption[Grid].get
+    val jsonStr=
+      """
+        |{"data":
+        |[
+        |[1,2,3,4],
+        |[0,0,0,0],
+        |[0,0,0,0],
+        |[0,0,0,0]
+        |],
+        |"step":10,
+        |"playerTurn":true,
+        |"key":"test"
+        |}""".stripMargin
+    val grid=jsonStr.decodeOption[Grid].get
     println(grid.key,grid.playerTurn,grid.step,grid.data.deep.mkString(" "))
 
     val r=Result("test2",10,Grid.UP)
