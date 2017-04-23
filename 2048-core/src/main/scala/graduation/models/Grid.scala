@@ -52,7 +52,27 @@ class Grid(val k:String, val p:Boolean,val s:Int,var d:Array[Array[Int]]) extend
   def smoothness():Double = ???
 
   // 计算局面孤立点的数目
-  def islands() = ???
+  def islands():Double = {
+    var dataMark=(for(x <- 0 to 3; y <- 0 to 3) yield ((x,y) -> false)) toMap
+    def mark(x:Int,y:Int,value:Int):Unit={
+      if(x>=0 && x<=3 && y>=0 && y<=3 && data(x)(y)!=0 && data(x)(y)==value && !dataMark((x,y))){
+        dataMark += ((x,y) -> true)
+        Grid.directs.foreach(d=>{
+          val vec=Grid.vectors(d)
+          mark(x+vec._1,y+vec._2,value)
+        })
+      }
+    }
+    var isLands=0;
+    for(x <- 0 to 3; y<- 0 to 3){
+      if(data(x)(y)!=0 && !dataMark((x,y))){
+        isLands+=1
+        mark(x,y,data(x)(y))
+      }
+    }
+
+    isLands
+  }
 
   // 计算局面的单调性
   def monotonicity():Double= ???
@@ -72,6 +92,13 @@ object Grid extends Enumeration{
   val RIGHT = Value("right")
   val NONE = Value("none")
   val directs=List(UP,LEFT,DOWN,RIGHT)
+
+  val vectors=Map[Direct,(Int,Int)](
+    UP->(0,-1),
+    RIGHT->(1,0),
+    DOWN->(0,1),
+    LEFT->(-1,0)
+  )
 
   def apply(k: String,p: Boolean,s: Int,d: Array[Array[Int]]) = new Grid(k,p,s,d)
 
