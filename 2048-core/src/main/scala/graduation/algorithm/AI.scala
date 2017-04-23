@@ -13,7 +13,7 @@ class AI (var d:Grid){
    def search(dept:Int,alpha:Double,beta: Double): (Grid.Direct,Double) ={
      var bestScore: Double=0
      var bestMove: Grid.Direct=Grid.NONE
-     var result:(Grid.Direct,Double)=()
+     var result:(Grid.Direct,Double)= null
 
      if(grid.playerTurn){
        // 该玩家选择方向
