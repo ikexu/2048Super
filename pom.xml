@@ -94,7 +94,11 @@
       <artifactId>argonaut_2.11</artifactId>
       <version>6.1</version>
     </dependency>
-
+    <dependency>
+      <groupId>org.scalanlp</groupId>
+      <artifactId>breeze_2.11</artifactId>
+      <version>0.12</version>
+    </dependency>
   </dependencies>
 
   <build>

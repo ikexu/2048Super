@@ -2,6 +2,9 @@ package graduation.models
 
 import argonaut._
 import Argonaut._
+import org.apache.avro.SchemaBuilder.ArrayBuilder
+
+import scala.collection.mutable.ArrayBuffer
 
 
 /**
@@ -34,19 +37,48 @@ class Grid(val k:String, val p:Boolean,val s:Int,var d:Array[Array[Int]]) extend
   }
 
   // 朝某个方向移动后的局面,如果不能移动返回false
-  def move(direct:Grid.Direct):Boolean = ???
+  def move(direct:Grid.Direct):Boolean = {
+      direct match {
+        case Grid.UP => println("上")
+
+
+        case Grid.DOWN => println("下")
+
+        case Grid.LEFT => println("左右")
+
+        case Grid.RIGHT => println("右")
+      }
+    true
+
+  }
 
   // 克隆该Grid对象
-  override def clone(): Grid = ???
+  override def clone(): Grid = {
+    val copydata=data.clone()
+    new Grid(key,playerTurn,step,copydata)
+  }
 
   // 评价该局面的评分
   def eval(): Double = ???
 
   // 返回空格的索引数组
-  def availableCells():Array[(Int,Int)] = ???
+  def availableCells():Array[(Int,Int)] = {
+    val noneArray = new ArrayBuffer[(Int,Int)]()
+      for (row <- 0 to 3) {
+        for (col <- 0 to 3) {
+        if(data(row)(col).equals(0)){
+         noneArray += ((row,col))
+        }
+      }
+    }
+    noneArray.toArray
+  }
 
   // 添加格子，设置value为0即为删除格子
-  def setCell(index:(Int,Int) , value: Int):Grid = ???
+  def setCell(index:(Int,Int) , value: Int):Grid = {
+    data(index._1)(index._2)=value
+    this
+  }
 
   // 计算局面的平滑性
   def smoothness():Double = ???
@@ -74,11 +106,15 @@ class Grid(val k:String, val p:Boolean,val s:Int,var d:Array[Array[Int]]) extend
     isLands
   }
 
+
   // 计算局面的单调性
   def monotonicity():Double= ???
 
   // 局面中最大的值
-  def maxValue():Int= ???
+  def maxValue():Int= {
+    val mValue=data.maxBy(_.max).max
+    mValue
+  }
 
 }
 

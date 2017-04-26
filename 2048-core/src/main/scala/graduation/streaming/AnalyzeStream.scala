@@ -1,7 +1,9 @@
 package graduation.streaming
 
-import org.apache.spark.streaming.dstream.InputDStream
-
+import graduation.models.Grid
+import graduation.models.Grid._
+import org.apache.spark.streaming.dstream.{DStream, InputDStream}
+import argonaut._, Argonaut._
 import scala.reflect.ClassTag
 
 /**
@@ -9,7 +11,7 @@ import scala.reflect.ClassTag
   */
 object AnalyzeStream extends Analyze {
 
-  override def analyzeStream[K: ClassTag, V: ClassTag](stream: InputDStream[(K, V)]): Unit = {
+  override def analyzeStream(stream: InputDStream[(String, String)]): Unit = {
 
     val processedStream = transform(stream)
     processedStream.foreachRDD { rdd =>
@@ -20,12 +22,22 @@ object AnalyzeStream extends Analyze {
 
   }
 
-  override def analyze[K: ClassTag, V: ClassTag](kv: (K, V)): Unit = {
+  override def analyze(kv: (String, Grid)): Unit = {
 
   }
 
-  private def transform[K: ClassTag, V: ClassTag](stream: InputDStream[(K, V)]): InputDStream[(K, V)] = {
 
-    stream
+
+
+  private def transform(stream: InputDStream[(String,String)]):DStream[(String, Grid)]= {
+
+    stream.transform{rdd =>
+      rdd.map{ message =>
+        val key=message._1
+        val value=message._2
+        val grid=value.decodeOption[Grid].get
+        (key,grid)
+      }
+    }
   }
 }

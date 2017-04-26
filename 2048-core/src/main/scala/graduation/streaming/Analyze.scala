@@ -1,5 +1,6 @@
 package graduation.streaming
 
+import graduation.models.Grid
 import org.apache.spark.streaming.dstream.InputDStream
 
 import scala.reflect.ClassTag
@@ -9,8 +10,8 @@ import scala.reflect.ClassTag
   */
 trait Analyze {
 
-  def analyzeStream[K: ClassTag, V: ClassTag](stream: InputDStream[(K, V)])
+  def analyzeStream(stream: InputDStream[(String, String)])
 
-  def analyze[K: ClassTag, V: ClassTag](kv: (K, V))
+  def analyze(kv: (String, Grid))
 
 }
