@@ -153,8 +153,7 @@ class Grid(val k:String, val p:Boolean,val s:Int,var d:Array[Array[Int]]) extend
     new Grid(key,playerTurn,step,copydata)
   }
 
-  // 评价该局面的评分
-  def eval(): Double = ???
+
 
   // 返回空格的索引数组
   def availableCells():Array[(Int,Int)] = {
@@ -186,7 +185,91 @@ class Grid(val k:String, val p:Boolean,val s:Int,var d:Array[Array[Int]]) extend
   }
 
   // 计算局面的平滑性
-  def smoothness():Double = ???
+  def smoothness():Double = {
+    var smoothness = 0
+    for(x <- 0 to 3; y <- 0 to 3){
+      if(data(x)(y)!=0){
+        val value=math.log(data(x)(y))/math.log(2)
+       for(d <- List(Grid.RIGHT,Grid.DOWN)){
+         val vec=Grid.vectors.get(d).get
+         val tc=findFarthestPosition((x,y),vec)._2
+         if(data(tc._1)(tc._2)!=0){
+           val tv=math.log(data(tc._1)(tc._2))/math.log(2)
+           smoothness-=math.abs(value-tv)
+
+         }
+       }
+      }
+    }
+    smoothness
+  }
+
+  // 计算局面单调性
+  def monotonicity():Double={
+    var result=Array[Double](4)
+    // 上下方向
+    List(0,1,2,3).foreach({x=>
+      var current=0
+      var next=current+1
+      while(next<4){
+        while(next<4&&data(x)(next)==0){
+          next+=1
+        }
+        if(next>=4){
+          next-=1
+        }
+        val currentValue=if(data(x)(current)!=0){
+          math.log(data(x)(current))/math.log(2)
+        }else{
+          0
+        }
+        val nextValue=if(data(x)(next)!=0){
+          math.log(data(x)(next))/math.log(2)
+        }else{
+          0
+        }
+        if(currentValue>nextValue){
+          result(0)+=nextValue-currentValue
+        }else if(nextValue>currentValue){
+          result(1)+=currentValue-nextValue
+        }
+        current=next
+        next+=1
+      }
+    })
+
+    // 左右方向
+    List(0,1,2,3).foreach({y=>
+      var current=0
+      var next=current+1
+      while(next<4){
+        while(next<4&&data(next)(y)==0){
+          next+=1
+        }
+        if(next>=4){
+          next-=1
+        }
+        val currentValue=if(data(current)(y)!=0){
+          math.log(data(current)(y))/math.log(2)
+        }else{
+          0
+        }
+        val nextValue=if(data(next)(y)!=0){
+          math.log(data(next)(y))/math.log(2)
+        }else{
+          0
+        }
+        if(currentValue>nextValue){
+          result(2)+=nextValue-currentValue
+        }else if(nextValue>currentValue){
+          result(3)+=currentValue-nextValue
+        }
+        current=next
+        next+=1
+      }
+    })
+    math.max(result(0),result(1))+math.max(result(2),result(3))
+  }
 
   // 计算局面孤立点的数目
   def islands():Double = {
@@ -211,9 +294,22 @@ class Grid(val k:String, val p:Boolean,val s:Int,var d:Array[Array[Int]]) extend
     isLands
   }
 
+  // 寻找局面最远的格子
+  def findFarthestPosition(cell:(Int,Int),vec:(Int,Int)):((Int,Int),(Int,Int))={
+    var previous:(Int,Int) = null;
+    var cell:(Int,Int) = cell;
+    do {
+      previous=cell
+      cell=(cell._1+vec._1,cell._2+vec._2)
+    }while(withinBounds(cell)&&data(cell._1)(cell._2)==0)
+    (previous,cell)
+  }
 
-  // 计算局面的单调性
-  def monotonicity():Double= ???
+  // 检查cell是否在边界内
+  def withinBounds(cell:(Int,Int)): Boolean ={
+    cell._1>=0&&cell._1<=3&&cell._2>=0&&cell._2<=3
+  }
+
 
   // 局面中最大的值
   def maxValue():Int= {

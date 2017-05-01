@@ -22,7 +22,9 @@ var session *mgo.Session
 
 func main() {
 	initDB()
-	defer session.Close()
+	if session != nil {
+		defer session.Close()
+	}
 
 	api := iris.New()
 	api.Use(cors.Default())
@@ -36,16 +38,18 @@ func main() {
 // Init mongodb connecion
 func initDB() {
 	mongodb := conf.Mongodb
-	info := &mgo.DialInfo{
-		Addrs:    strings.Split(mongodb.Host, ","),
-		Timeout:  60 * time.Second,
-		Username: mongodb.Username,
-		Password: mongodb.Password,
-	}
+	if mongodb.Host != "" {
+		info := &mgo.DialInfo{
+			Addrs:    strings.Split(mongodb.Host, ","),
+			Timeout:  60 * time.Second,
+			Username: mongodb.Username,
+			Password: mongodb.Password,
+		}
 
-	var err error
-	session, err = mgo.DialWithInfo(info)
-	if err != nil {
-		panic("Connnect mongodb error:" + err.Error())
+		var err error
+		session, err = mgo.DialWithInfo(info)
+		if err != nil {
+			panic("Connnect mongodb error:" + err.Error())
+		}
 	}
 }

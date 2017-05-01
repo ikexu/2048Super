@@ -10,6 +10,17 @@ import scala.collection.mutable.ListBuffer
 class AI (var d:Grid){
   var grid=d;
 
+  // 评价该局面的评分
+  def eval(): Double = {
+    // 权重
+    val (smoothWeight,monoWeight,emptyWeight,maxWeight)=(0.1,1.0,2.7,1.0)
+
+    grid.smoothness()*smoothWeight+
+    grid.monotonicity()*monoWeight
+    grid.availableCells().length*emptyWeight+
+    grid.maxValue()*maxWeight
+  }
+
    def search(dept:Int,alpha:Double,beta: Double): (Grid.Direct,Double) ={
      var bestScore: Double=0
      var bestMove: Grid.Direct=Grid.NONE
@@ -24,7 +35,7 @@ class AI (var d:Grid){
            val newAI = AI(newGrid)
            // 深度为0，返回此时最好的中间局
            if(dept==0){
-             result = (bestMove,grid.eval())
+             result = (bestMove,this.eval())
            }else{
              result=search(dept-1,bestScore,beta)
            }
@@ -66,7 +77,7 @@ class AI (var d:Grid){
          }
        })
      }
-     return (bestMove,bestScore)
+     (bestMove,bestScore)
    }
 
 }
