@@ -39,8 +39,6 @@ object OfflineAnalysisStart {
       val baseData= mongodbRdd.map{ doc =>
         try {
           val grid=doc.get("grid").asInstanceOf[util.ArrayList[util.ArrayList[util.ArrayList[Int]]]].asScala
-          val headGrid=grid.head.asScala.flatMap(i=>i.asScala)
-          val lastGrid=grid.last.asScala.flatMap(i=>i.asScala)
           val headMatrix:DenseMatrix[Double]=DenseMatrix(grid.head.asScala.map(i=>
             Tuple4(i.get(0).toDouble,i.get(1).toDouble,i.get(2).toDouble,i.get(3).toDouble)):_*)
           val lastMatrix:DenseMatrix[Double]=DenseMatrix(grid.last.asScala.map(i=>
