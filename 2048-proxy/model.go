@@ -3,8 +3,9 @@ package main
 import "time"
 
 type Record struct {
-	Grid [][]int `json:"grid"`
-	UUID string  `json:"uuid"`
+	Grid [][]int `json:"data"`
+	UUID string  `json:"key"`
+	Step int     `json:"step"`
 }
 
 type Resp struct {

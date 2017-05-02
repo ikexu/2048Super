@@ -5,3 +5,6 @@ target
 2048-core/target/
 2048-proxy/2048-proxy
 2048-proxy/config.json
+checkpoint*
+.checkpoint*
+receivedBlockMetadata

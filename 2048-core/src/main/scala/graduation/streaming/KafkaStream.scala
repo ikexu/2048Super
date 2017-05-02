@@ -15,18 +15,6 @@ class KafkaStream(kafkaParams: Map[String, String], kafkaTopic: Set[String]) {
   private var kafkaParams_ : Map[String, String] = kafkaParams
   private var kafkaTopics_ : Set[String] = kafkaTopic
 
-  def this(params: Map[String, String]) = {
-    this(params, null)
-  }
-
-  def this(topic: Set[String]) = {
-    this(null, topic)
-  }
-
-  def this() = {
-    this(null, null)
-  }
-
   /**
     * get a stream that receving kafka
     *
@@ -41,9 +29,7 @@ class KafkaStream(kafkaParams: Map[String, String], kafkaTopic: Set[String]) {
   KD <: Decoder[K] : ClassTag,
   VD <: Decoder[V] : ClassTag]
   (ssc: StreamingContext, kafkaParams: Map[String, String], topic: Set[String]): InputDStream[(K, V)] = {
-
     KafkaUtils.createDirectStream[K, V, KD, VD](ssc, kafkaParams, topic)
-
   }
 
   def createStream[

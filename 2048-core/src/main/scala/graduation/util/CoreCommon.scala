@@ -8,10 +8,12 @@ import org.apache.spark.{SparkConf, SparkContext}
   */
 object CoreCommon {
 
-  val receveTopic: String = ""
   private val coreAppName = "2048Super-Core"
   private val coreStreamingCheckPoint = "."
-  val kafkaBroker:String ="localhost:9091"
+  val kafkaBroker:String ="localhost:9092"
+  val ComputerTopic = "computer-topic"
+  val ReturnTopic   = "return-topic"
+
 
   /**
     * get [[SparkContext]] instance
@@ -41,7 +43,7 @@ object CoreCommon {
   def instanceStreaming(spark: SparkContext, durationMs: Long = 500): StreamingContext = {
 
     val ssc = new StreamingContext(spark, Duration(durationMs))
-    ssc.checkpoint(coreStreamingCheckPoint)
+    //ssc.checkpoint(coreStreamingCheckPoint)
     ssc
   }
 }

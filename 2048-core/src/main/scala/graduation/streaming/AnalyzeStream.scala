@@ -12,17 +12,17 @@ import scala.reflect.ClassTag
 object AnalyzeStream extends Analyze {
 
   override def analyzeStream(stream: InputDStream[(String, String)]): Unit = {
-
-    val processedStream = transform(stream)
-    processedStream.foreachRDD { rdd =>
-      rdd.foreach { kv =>
-        analyze(kv)
-      }
+    transform(stream).foreachRDD { rdd =>
+      rdd.foreachPartition(p=>{
+        p.foreach(record=>{
+          analyze(record)
+        })
+      })
     }
-
   }
 
   override def analyze(kv: (String, Grid)): Unit = {
+    println(kv._1,kv._2)
 
   }
 
@@ -30,13 +30,12 @@ object AnalyzeStream extends Analyze {
 
 
   private def transform(stream: InputDStream[(String,String)]):DStream[(String, Grid)]= {
-
     stream.transform{rdd =>
       rdd.map{ message =>
-        val key=message._1
-        val value=message._2
-        val grid=value.decodeOption[Grid].get
-        (key,grid)
+//        val key=message._1
+//        val value=message._2
+//        val grid=value.decodeOption[Grid].get
+        (message._1,message._2.decodeOption[Grid].get)
       }
     }
   }

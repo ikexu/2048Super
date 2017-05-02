@@ -186,7 +186,7 @@ class Grid(val k:String, val p:Boolean,val s:Int,var d:Array[Array[Int]]) extend
 
   // 计算局面的平滑性
   def smoothness():Double = {
-    var smoothness = 0
+    var smoothness = 0.0
     for(x <- 0 to 3; y <- 0 to 3){
       if(data(x)(y)!=0){
         val value=math.log(data(x)(y))/math.log(2)
@@ -295,9 +295,9 @@ class Grid(val k:String, val p:Boolean,val s:Int,var d:Array[Array[Int]]) extend
   }
 
   // 寻找局面最远的格子
-  def findFarthestPosition(cell:(Int,Int),vec:(Int,Int)):((Int,Int),(Int,Int))={
-    var previous:(Int,Int) = null;
-    var cell:(Int,Int) = cell;
+  def findFarthestPosition(c:(Int,Int),vec:(Int,Int)):((Int,Int),(Int,Int))={
+    var previous:(Int,Int) = null
+    var cell:(Int,Int) = c
     do {
       previous=cell
       cell=(cell._1+vec._1,cell._2+vec._2)
@@ -349,8 +349,7 @@ object Grid extends Enumeration{
   implicit def GridDecodeJson: DecodeJson[Grid] =
     DecodeJson(g => for {
       key <- (g --\ "key").as[String]
-      playerTurn <- (g --\ "playerTurn").as[Boolean]
       step <- (g --\ "step").as[Int]
       data <- (g --\ "data").as[Array[Array[Int]]]
-    } yield new Grid(key,playerTurn,step,data))
+    } yield new Grid(key,false,step,data))
 }
