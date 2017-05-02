@@ -13,5 +13,7 @@ object CoreEnv {
   val sparkMongodbInputDatabase=Constant.getString("spark.mongodb.input.database").get
   val sparkMongodbInputCollection=Constant.getString("spark.mongodb.input.collection").get
   val sparkMongodbInputReadPreference=Constant.getString("spark.mongodb.input.readPreference.name").get
+  val excellentThreshold=Constant.getInt("excellentThreshold").getOrElse(10000)
+  val modelSavePath=Constant.getString("modelSavePath").get
 
 }
