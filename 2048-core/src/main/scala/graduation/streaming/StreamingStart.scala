@@ -1,6 +1,6 @@
 package graduation.streaming
 
-import graduation.util.CoreCommon
+import graduation.util.{Constant, CoreCommon, CoreEnv}
 import org.apache.spark.streaming.StreamingContext
 
 /**
@@ -10,15 +10,18 @@ object StreamingStart {
 
   private def init(): Unit = {
 
+    Constant.ConstantInit()
   }
 
   def main(args: Array[String]): Unit = {
 
-    val spark = CoreCommon.instanceSpark("local[*]")
-    val ssc: StreamingContext = CoreCommon.instanceStreaming(spark,2000)
+    init()
+
+    val spark = CoreCommon.instanceSpark(CoreEnv.master)
+    val ssc: StreamingContext = CoreCommon.instanceStreaming(spark,CoreEnv.streamingDurationMs)
 
     val kafkaParams: Map[String, String] = Map(
-      "metadata.broker.list" -> CoreCommon.kafkaBroker,
+      "metadata.broker.list" -> CoreEnv.kafkaBroker,
        "serializer.class" -> "kafka.serializer.StringEncoder"
     )
 

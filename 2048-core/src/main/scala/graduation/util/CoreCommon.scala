@@ -9,11 +9,8 @@ import org.apache.spark.{SparkConf, SparkContext}
 object CoreCommon {
 
   private val coreAppName = "2048Super-Core"
-  private val coreStreamingCheckPoint = "."
-  val kafkaBroker:String ="localhost:9092"
   val ComputerTopic = "computer-topic"
   val ReturnTopic   = "return-topic"
-
 
   /**
     * get [[SparkContext]] instance
