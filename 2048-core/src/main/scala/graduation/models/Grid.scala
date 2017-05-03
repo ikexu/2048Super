@@ -193,7 +193,7 @@ class Grid(val k:String, val p:Boolean,val s:Int,var d:Array[Array[Int]]) extend
        for(d <- List(Grid.RIGHT,Grid.DOWN)){
          val vec=Grid.vectors.get(d).get
          val tc=findFarthestPosition((x,y),vec)._2
-         if(data(tc._1)(tc._2)!=0){
+         if(withinBounds(tc)&&data(tc._1)(tc._2)!=0){
            val tv=math.log(data(tc._1)(tc._2))/math.log(2)
            smoothness-=math.abs(value-tv)
 
@@ -206,7 +206,7 @@ class Grid(val k:String, val p:Boolean,val s:Int,var d:Array[Array[Int]]) extend
 
   // 计算局面单调性
   def monotonicity():Double={
-    var result=Array[Double](4)
+    var result=Array(0.0,0.0,0.0,0.0)
     // 上下方向
     List(0,1,2,3).foreach({x=>
       var current=0
@@ -351,5 +351,5 @@ object Grid extends Enumeration{
       key <- (g --\ "key").as[String]
       step <- (g --\ "step").as[Int]
       data <- (g --\ "data").as[Array[Array[Int]]]
-    } yield new Grid(key,false,step,data))
+    } yield new Grid(key,true,step,data))
 }

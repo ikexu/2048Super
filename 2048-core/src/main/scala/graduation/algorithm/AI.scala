@@ -1,5 +1,7 @@
 package graduation.algorithm
 
+import java.util.Date
+
 import graduation.models.Grid
 
 import scala.collection.mutable.ListBuffer
@@ -32,6 +34,7 @@ class AI (var d:Grid){
        for(direct <- List(Grid.UP,Grid.LEFT,Grid.DOWN,Grid.RIGHT)){
          val newGrid=grid.clone()
          if(newGrid.move(direct)){
+           newGrid.playerTurn=false
            val newAI = AI(newGrid)
            // 深度为0，返回此时最好的中间局
            if(dept==0){
@@ -68,7 +71,9 @@ class AI (var d:Grid){
          })
        })
        badCells.foreach(badValue=>{
-         result=AI(grid.clone().setCell(badValue._1,badValue._2)).search(dept,alpha,bestScore)
+         var newGrid=grid.clone()
+         newGrid.playerTurn=true
+         result=AI(newGrid.setCell(badValue._1,badValue._2)).search(dept,alpha,bestScore)
          if(result._2<bestScore){
            bestScore=result._2
          }
@@ -79,6 +84,31 @@ class AI (var d:Grid){
      }
      (bestMove,bestScore)
    }
+
+  def getBest():(Grid.Direct,Double)={
+    iterativeDeep()
+  }
+
+  def iterativeDeep():(Grid.Direct,Double)={
+    val start=new Date().getTime
+    var dept=0
+    var best:(Grid.Direct,Double)=null
+    import scala.util.control.Breaks
+    val loop = new Breaks
+
+    loop.breakable {
+      do {
+        var newBest = search(dept, -10000, 10000)
+        if (newBest._1 == Grid.NONE) {
+          loop.break
+        }
+        best=newBest
+        dept+=1
+     } while (new Date().getTime - start < 3000)
+      //} while (dept<=2)
+    }
+    best
+  }
 
 }
 

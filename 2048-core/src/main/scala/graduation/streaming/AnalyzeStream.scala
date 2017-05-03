@@ -3,7 +3,10 @@ package graduation.streaming
 import graduation.models.Grid
 import graduation.models.Grid._
 import org.apache.spark.streaming.dstream.{DStream, InputDStream}
-import argonaut._, Argonaut._
+import argonaut._
+import Argonaut._
+import graduation.algorithm.AI
+
 import scala.reflect.ClassTag
 
 /**
@@ -23,7 +26,8 @@ object AnalyzeStream extends Analyze {
 
   override def analyze(kv: (String, Grid)): Unit = {
     println(kv._1,kv._2)
-
+    val result=new AI(kv._2).getBest()
+    println(result._1,result._2)
   }
 
 
