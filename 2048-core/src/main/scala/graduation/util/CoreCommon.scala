@@ -8,10 +8,6 @@ import org.apache.spark.{SparkConf, SparkContext}
   */
 object CoreCommon {
 
-  private val coreAppName = "2048Super-Core"
-  val ComputerTopic = "computer-topic"
-  val ReturnTopic   = "return-topic"
-
   /**
     * get [[SparkContext]] instance
     *
@@ -21,7 +17,7 @@ object CoreCommon {
     */
   def instanceSpark(master: String, conf: Array[(String, String)] = Array.empty[(String, String)]): SparkContext = {
 
-    val sparkConf = new SparkConf().setAppName(coreAppName).setMaster(master)
+    val sparkConf = new SparkConf().setAppName(CoreEnv.coreAppName).setMaster(master)
 
     conf.foreach { case (k, v) =>
       sparkConf.set(k, v)
