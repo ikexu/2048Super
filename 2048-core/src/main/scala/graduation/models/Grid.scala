@@ -330,11 +330,11 @@ class Grid(val k: String, val p: Boolean, val s: Int, var d: Array[Array[Int]]) 
 object Grid extends Enumeration {
 
   type Direct = Value
-  val UP = Value("up")
-  val LEFT = Value("left")
-  val DOWN = Value("down")
-  val RIGHT = Value("right")
-  val NONE = Value("none")
+  val UP = Value(0)
+  val LEFT = Value(3)
+  val DOWN = Value(2)
+  val RIGHT = Value(1)
+  val NONE = Value(4)
   val directs = List(UP, LEFT, DOWN, RIGHT)
 
   val vectors = Map[Direct, (Int, Int)](
