@@ -6,7 +6,7 @@ import graduation.algorithm.AI
 import graduation.kafka.KafkaProducer
 import graduation.models.Grid._
 import graduation.models.{Grid, Result}
-import graduation.util.CoreEnv
+import graduation.util.{CoreEnv, HttpUtil}
 import org.apache.spark.streaming.dstream.{DStream, InputDStream}
 import org.slf4j.LoggerFactory
 
@@ -30,11 +30,17 @@ object AnalyzeStream extends Analyze {
   }
 
   override def analyze(kv: (String, Grid)): Unit = {
-    logger.info(s"analyze message -> [${kv._2.toString}]")
-    val bestDiret = new AI(kv._2).getBest()
-    val result = Result(kv._1, bestDiret._1).asJson.toString()
-    logger.info(s"return message -> [key:${kv._1} result:${result}]")
-    //kafkaProducer.sendMessageToKafka(kv._1, result)
+    try {
+      logger.info(s"analyze message[${kv._1}] -> [${kv._2.toString}]")
+      val bestDiret = new AI(kv._2).getBest()
+      val result = Result(kv._1, bestDiret._1).asJson.toString()
+      logger.info(s"return message[${kv._1}] -> [result:${result}]")
+      //kafkaProducer.sendMessageToKafka(kv._1, result)
+      new HttpUtil().sendPost(result)
+    } catch {
+      case e:Throwable => logger.error(s"analyze message[${kv._1}] error:",e)
+    }
+
   }
 
 

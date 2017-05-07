@@ -23,5 +23,6 @@ object CoreEnv {
   var monoWeight: Double = Constant.getDouble("monoWeight").getOrElse(1.0)
   var emptyWeight: Double = Constant.getDouble("emptyWeight").getOrElse(2.7)
   var maxWeight: Double = Constant.getDouble("maxWeight").getOrElse(1.0)
+  var httpPostUri:String = Constant.getString("httpPostUri").get
 
 }

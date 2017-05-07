@@ -16,6 +16,7 @@ class AI(var d: Grid) {
   // 评价该局面的评分
   def eval(): Double = {
     // 权重
+
     val (smoothWeight, monoWeight, emptyWeight, maxWeight) = (AI.smoothWeight, AI.monoWeight, AI.emptyWeight, AI.maxWeight)
 
     grid.smoothness() * smoothWeight +
@@ -105,7 +106,7 @@ class AI(var d: Grid) {
         }
         best = newBest
         dept += 1
-      } while (new Date().getTime - start < AI.searchTimeOut)
+      } while (System.currentTimeMillis() - start < AI.searchTimeOut)
       //} while (dept<=2)
     }
     best

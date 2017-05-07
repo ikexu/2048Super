@@ -15,6 +15,6 @@ object Result {
   implicit def ResultEncodeJson: EncodeJson[Result] =
     EncodeJson((r: Result) =>
       ("key" := r.key) ->:
-        ("direct" := r.direct.toString) ->:
+        ("direct" := r.direct.id) ->:
         jEmptyObject)
 }

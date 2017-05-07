@@ -38,8 +38,8 @@ object StreamingStart {
     AI.model=newModel
     */
     val kafkaParams: Map[String, String] = Map(
-      "metadata.broker.list" -> CoreEnv.kafkaBroker,
-      "serializer.class" -> "kafka.serializer.StringEncoder"
+      "metadata.broker.list" -> CoreEnv.kafkaBroker
+      //"serializer.class" -> "kafka.serializer.StringEncoder"
     )
 
     val topics: Set[String] = Set(
