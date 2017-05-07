@@ -21,7 +21,8 @@ class AI(var d: Grid) {
 
     val smoothValue = grid.smoothness() * smoothWeight
     val monoValue = grid.monotonicity() * monoWeight
-    val emptyValue = math.log(grid.availableCells().length) * emptyWeight
+   // val emptyValue = math.log(grid.availableCells().length) * emptyWeight
+   val emptyValue = grid.availableCells().length * emptyWeight
     val maxValue = grid.maxValue() * maxWeight
     smoothValue+monoValue+emptyValue+maxValue
   }
