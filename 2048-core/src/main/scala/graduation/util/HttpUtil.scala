@@ -9,12 +9,11 @@ class HttpUtil {
 
   val uri=CoreEnv.httpPostUri
 
-  def sendPost(message:String):String={
+  def sendPost(message:String):HttpResponse[String]={
       val response: HttpResponse[String] = Http(uri).postData(message)
         .header("Content-Type", "application/json").asString
-      response.body
+      response
   }
-
 }
 
 object HttpUtil {
