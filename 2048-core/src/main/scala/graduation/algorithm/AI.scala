@@ -19,7 +19,11 @@ class AI(var d: Grid) {
 
     val (smoothWeight, monoWeight, emptyWeight, maxWeight) = (AI.smoothWeight, AI.monoWeight, AI.emptyWeight, AI.maxWeight)
 
-    grid.smoothness() * smoothWeight + grid.monotonicity() * monoWeight + grid.availableCells().length * emptyWeight + grid.maxValue() * maxWeight
+    val smoothValue = grid.smoothness() * smoothWeight
+    val monoValue = grid.monotonicity() * monoWeight
+    val emptyValue = math.log(grid.availableCells().length) * emptyWeight
+    val maxValue = grid.maxValue() * maxWeight
+    smoothValue+monoValue+emptyValue+maxValue
   }
 
   def search(dept: Int, alpha: Double, beta: Double): (Grid.Direct, Double) = {
@@ -54,7 +58,7 @@ class AI(var d: Grid) {
       // 该电脑选择放入数字
       bestScore = beta
       var cells = grid.availableCells()
-      var badScore = 100.0;
+      var badScore = 100.0
       var badCells = ListBuffer[((Int, Int), Int)]()
       List(2, 4).foreach(value => {
         cells.foreach(cell => {
