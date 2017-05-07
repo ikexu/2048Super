@@ -32,11 +32,9 @@ func compute(ctx *iris.Context) {
 	defer close(resultChan)
 
 	m.Set(r.UUID, resultChan)
-	log.Println("Set chanel")
 	defer m.Remove(r.UUID)
 
 	result := <-resultChan
-	log.Println("Get chanel")
 
 	//rd := rand.New(rand.NewSource(time.Now().UnixNano()))
 	ctx.JSON(iris.StatusOK, &Resp{
@@ -80,7 +78,6 @@ func result(ctx *iris.Context) {
 	// Retrieve item from map.
 	if tmp, ok := m.Get(result.UUID); ok {
 		ch := tmp.(chan *Result)
-		log.Println("Get chanel")
 		ch <- result
 	}
 
