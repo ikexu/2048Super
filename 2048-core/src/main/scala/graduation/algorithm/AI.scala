@@ -19,10 +19,7 @@ class AI(var d: Grid) {
 
     val (smoothWeight, monoWeight, emptyWeight, maxWeight) = (AI.smoothWeight, AI.monoWeight, AI.emptyWeight, AI.maxWeight)
 
-    grid.smoothness() * smoothWeight +
-      grid.monotonicity() * monoWeight
-    grid.availableCells().length * emptyWeight +
-      grid.maxValue() * maxWeight
+    grid.smoothness() * smoothWeight + grid.monotonicity() * monoWeight + grid.availableCells().length * emptyWeight + grid.maxValue() * maxWeight
   }
 
   def search(dept: Int, alpha: Double, beta: Double): (Grid.Direct, Double) = {
