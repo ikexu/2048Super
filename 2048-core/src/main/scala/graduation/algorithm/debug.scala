@@ -11,7 +11,7 @@ object debug {
 
 
   def main(args: Array[String]): Unit = {
-   /* val jsonStr1 =
+   val jsonStr1 =
       """
         |{"data":
         |[
@@ -25,7 +25,7 @@ object debug {
         |"key":"test"
         |}""".stripMargin
     val grid1 = jsonStr1.decodeOption[Grid].get
-    AITest(grid1)*/
+    AITest(grid1)
 
    /* val jsonStr2 =
       """
@@ -44,9 +44,6 @@ object debug {
     //moveTest(grid2)
     //maxValueTest(grid2)
     AITest(grid2)*/
-    println(Math.log(2.7183))
-    println(Math.log(2))
-    println(Math.log(1))
 
   }
 

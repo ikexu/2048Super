@@ -21,8 +21,8 @@ class AI(var d: Grid) {
 
     val smoothValue = grid.smoothness() * smoothWeight
     val monoValue = grid.monotonicity() * monoWeight
-   // val emptyValue = math.log(grid.availableCells().length) * emptyWeight
-   val emptyValue = grid.availableCells().length * emptyWeight
+   val emptyValue = math.log(grid.availableCells().length) * emptyWeight
+   //val emptyValue = grid.availableCells().length * emptyWeight
     val maxValue = grid.maxValue() * maxWeight
     smoothValue+monoValue+emptyValue+maxValue
   }
@@ -42,9 +42,9 @@ class AI(var d: Grid) {
           val newAI = AI(newGrid)
           // 深度为0，返回此时最好的中间局
           if (dept == 0) {
-            result = (bestMove, this.eval())
+            result = (bestMove, newAI.eval())
           } else {
-            result = search(dept - 1, bestScore, beta)
+            result = newAI.search(dept - 1, bestScore, beta)
           }
           if (result._2 > bestScore) {
             bestScore = result._2
@@ -58,11 +58,10 @@ class AI(var d: Grid) {
     } else {
       // 该电脑选择放入数字
       bestScore = beta
-      var cells = grid.availableCells()
-      var badScore = 100.0
+      var badScore = 100000.0;
       var badCells = ListBuffer[((Int, Int), Int)]()
       List(2, 4).foreach(value => {
-        cells.foreach(cell => {
+        grid.availableCells().foreach(cell => {
           grid.setCell(cell, value)
           val score = grid.smoothness() + grid.islands()
           if (score < badScore) {
@@ -75,7 +74,7 @@ class AI(var d: Grid) {
         })
       })
       badCells.foreach(badValue => {
-        var newGrid = grid.clone()
+        val newGrid = grid.clone()
         newGrid.playerTurn = true
         result = AI(newGrid.setCell(badValue._1, badValue._2)).search(dept, alpha, bestScore)
         if (result._2 < bestScore) {
