@@ -92,7 +92,7 @@ class AI(var d: Grid) {
   }
 
   def iterativeDeep(): (Grid.Direct, Double) = {
-    val start = new Date().getTime
+    val start = System.currentTimeMillis()
     var dept = 0
     var best: (Grid.Direct, Double) = null
     import scala.util.control.Breaks
