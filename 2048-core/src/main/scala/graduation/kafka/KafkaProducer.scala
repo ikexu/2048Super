@@ -25,6 +25,12 @@ class KafkaProducer(val brokers: String, val topic: String) {
     producer.send(data)
   }
 
+  def sendMessageToKafka(key: String, message: String) = {
+    val data: KeyedMessage[String, String] = new KeyedMessage[String, String](
+      topic, key, key, message)
+    producer.send(data)
+  }
+
   def close(): Unit = {
     producer.close
   }

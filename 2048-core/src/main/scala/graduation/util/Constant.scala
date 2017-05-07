@@ -57,7 +57,7 @@ object Constant {
     }
   }
 
-  def getDouble(key:String):Option[Double] = {
+  def getDouble(key: String): Option[Double] = {
     val value = prop.getProperty(key)
     if (value == null) {
       None

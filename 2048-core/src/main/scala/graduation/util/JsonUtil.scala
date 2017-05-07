@@ -1,9 +1,9 @@
 package graduation.util
 
-import graduation.models.Grid._
+import argonaut.Argonaut._
+import argonaut._
 import graduation.models.Grid
-import graduation.models.Result
-import argonaut._, Argonaut._
+import graduation.models.Grid._
 
 
 /**
@@ -12,7 +12,7 @@ import argonaut._, Argonaut._
 object JsonUtil {
 
   def main(args: Array[String]): Unit = {
-    val jsonStr=
+    val jsonStr =
       """
         |{"data":
         |[
@@ -25,21 +25,20 @@ object JsonUtil {
         |"playerTurn":true,
         |"key":"test"
         |}""".stripMargin
-    val grid=jsonStr.decodeOption[Grid].get
+    val grid = jsonStr.decodeOption[Grid].get
     /*println(grid.key,grid.playerTurn,grid.step,grid.data.deep.mkString(" "))
 
     val r=Result("test2",10,Grid.UP)
     println(r.asJson.toString())*/
     //grid.availableCells().foreach(println(_))
-   // println(grid.maxValue())
+    // println(grid.maxValue())
     //grid.setCell((1,1),1024).data.foreach(i=>println(i.mkString(" ")))
     /*println(grid.data+" "+grid)
     val newGrid=grid.clone()
     println(newGrid.data+" "+newGrid)*/
 
     println(grid.move(Grid.RIGHT))
-    grid.data.foreach(i=>println(i.mkString(" ")))
-
+    grid.data.foreach(i => println(i.mkString(" ")))
 
 
   }
