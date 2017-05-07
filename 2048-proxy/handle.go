@@ -3,8 +3,14 @@ package main
 import (
 	"log"
 
+	"github.com/orcaman/concurrent-map"
+
 	"github.com/kataras/iris"
 	"github.com/renstrom/shortuuid"
+)
+
+var (
+	m = cmap.New()
 )
 
 func compute(ctx *iris.Context) {
@@ -21,16 +27,23 @@ func compute(ctx *iris.Context) {
 		})
 		return
 	}
-	//if err := readKafka(r); err != nil {
-	//ctx.JSON(iris.StatusOK, Resp{
-	//Code:    01,
-	//Message: err.Error(),
-	//})
-	//return
-	//}
-	ctx.JSON(iris.StatusOK, Resp{
+
+	resultChan := make(chan *Result)
+	defer close(resultChan)
+
+	m.Set(r.UUID, resultChan)
+	log.Println("Set chanel")
+	defer m.Remove(r.UUID)
+
+	result := <-resultChan
+	log.Println("Get chanel")
+
+	//rd := rand.New(rand.NewSource(time.Now().UnixNano()))
+	ctx.JSON(iris.StatusOK, &Resp{
 		Code:    00,
 		Message: "Success!",
+		//Data:    rd.Intn(4),
+		Data: result.Direct,
 	})
 }
 
@@ -44,4 +57,35 @@ func record(ctx *iris.Context) {
 	if err := record.Save(); err != nil {
 		log.Println("Save game record error:", err.Error())
 	}
+}
+
+func result(ctx *iris.Context) {
+	result := &Result{}
+	if err := ctx.ReadJSON(&result); err != nil {
+		log.Println("Read json error:", err.Error())
+		ctx.JSON(iris.StatusOK, Resp{
+			Code:    01,
+			Message: err.Error(),
+		})
+		return
+	}
+	if len(result.UUID) == 0 {
+		ctx.JSON(iris.StatusOK, Resp{
+			Code:    01,
+			Message: "Key is empty",
+		})
+		return
+	}
+
+	// Retrieve item from map.
+	if tmp, ok := m.Get(result.UUID); ok {
+		ch := tmp.(chan *Result)
+		log.Println("Get chanel")
+		ch <- result
+	}
+
+	ctx.JSON(iris.StatusOK, &Resp{
+		Code:    00,
+		Message: "Success!",
+	})
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"log"
 	"strings"
 
@@ -12,6 +11,7 @@ import (
 
 // Send message to kafka
 func sendKafka(r *Record) error {
+
 	producer, err := sarama.NewSyncProducer(strings.Split(conf.Kafka, ","), nil)
 	if err != nil {
 		log.Fatalln(err)
@@ -40,44 +40,54 @@ func sendKafka(r *Record) error {
 }
 
 // Read message from kafka
-func readKafka(r *Record) error {
-	consumer, err := sarama.NewConsumer(strings.Split(conf.Kafka, ","), nil)
-	if err != nil {
-		return err
-	}
+//func readKafka(r *Record) error {
+//p := sarama.NewHashPartitioner(ReturnTopic)
+//partition, err := p.Partition(sarama.ProducerMessage{
+//Topic: ReturnTopic,
+//Key:   sarama.StringEncoder(r.UUID),
+//})
+//if err != nil {
+//log.Println("Computer partition error:", err.Error())
+//return err
+//}
 
-	defer func() {
-		if err := consumer.Close(); err != nil {
-			log.Fatalln(err)
-		}
-	}()
+//consumer, err := sarama.NewConsumer(strings.Split(conf.Kafka, ","), nil)
+//if err != nil {
+//return err
+//}
 
-	partitionConsumer, err := consumer.ConsumePartition(ReturnTopic, 0, sarama.OffsetOldest)
-	if err != nil {
-		return err
-	}
+//defer func() {
+//if err := consumer.Close(); err != nil {
+//log.Fatalln(err)
+//}
+//}()
 
-	defer func() {
-		if err := partitionConsumer.Close(); err != nil {
-			log.Fatalln(err)
-		}
-	}()
+//partitionConsumer, err := consumer.ConsumePartition(ReturnTopic, partition, sarama.OffsetOldest)
+//if err != nil {
+//return err
+//}
 
-	// Trap SIGINT to trigger a shutdown.
-	signals := make(chan bool, 1)
+//defer func() {
+//if err := partitionConsumer.Close(); err != nil {
+//log.Fatalln(err)
+//}
+//}()
 
-	err = errors.New("time out or interrupt!")
-ConsumerLoop:
-	for {
-		select {
-		case msg := <-partitionConsumer.Messages():
-			err = nil
-			log.Println(msg)
-			// Handle message
-			signals <- true
-		case <-signals:
-			break ConsumerLoop
-		}
-	}
-	return err
-}
+//// Trap SIGINT to trigger a shutdown.
+//signals := make(chan bool, 1)
+
+//err = errors.New("time out or interrupt!")
+//ConsumerLoop:
+//for {
+//select {
+//case msg := <-partitionConsumer.Messages():
+//err = nil
+//log.Println(msg)
+//// Handle message
+//signals <- true
+//case <-signals:
+//break ConsumerLoop
+//}
+//}
+//return err
+//}

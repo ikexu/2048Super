@@ -2,10 +2,24 @@ package main
 
 import "time"
 
+type Direct int
+
+const (
+	UP Direct = iota
+	RIGHT
+	DOWN
+	LEFT
+)
+
 type Record struct {
 	Grid [][]int `json:"data"`
 	UUID string  `json:"key"`
 	Step int     `json:"step"`
+}
+
+type Result struct {
+	UUID   string `json:"key"`
+	Direct Direct `json:"direct"`
 }
 
 type Resp struct {

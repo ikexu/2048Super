@@ -31,6 +31,7 @@ func main() {
 	api.Use(logger.New())
 	api.Post("/compute", compute)
 	api.Post("/record", record)
+	api.Post("/result", result)
 
 	api.Listen(fmt.Sprintf(":%d", conf.Port))
 }
