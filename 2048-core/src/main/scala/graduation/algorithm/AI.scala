@@ -26,6 +26,67 @@ class AI(var d: Grid) {
     smoothValue+monoValue+emptyValue+maxValue
   }
 
+
+  def expectiEval():Double={
+    grid.modelScore()
+  }
+
+  def expectimaxSearchBest(dept:Int): (Grid.Direct,Double) ={
+    var score = Double.MinValue;
+    var bestMove = Grid.NONE;
+
+    for (d <- Grid.directs) {
+      var newGrid = grid.clone();
+      newGrid.playerTurn=false
+      if(newGrid.move(d)){
+        var newScore = AI(newGrid).expectimaxSearch(dept - 1)
+
+        if (newScore > score) {
+          bestMove = d
+          score = newScore
+        }
+      }
+    }
+    (bestMove,score)
+  }
+
+  def expectimaxSearch(dept:Int):Double={
+
+    if(dept==0){
+      return expectiEval()
+    }else if (grid.playerTurn) {
+      var score=Double.MinValue
+      // Player node
+      for (direct <- Grid.directs) {
+        val newGrid = grid.clone()
+        if (newGrid.move(direct)) {
+          newGrid.playerTurn=false
+          val newAI = AI(newGrid)
+          val newScore=newAI.expectimaxSearch(dept - 1)
+          if(newScore>score){
+            score=newScore
+          }
+        }
+      }
+      return score
+    }else{
+      // Chance node
+      var score:Double=0
+      val cells=grid.availableCells()
+      cells.foreach(cell => {
+        Map(2 -> 0.9,4 -> 0.1).foreach{case (value,p)=>{
+          val newGrid=grid.clone()
+          newGrid.playerTurn=true
+          newGrid.setCell(cell,value)
+          val newScore=AI(newGrid).expectimaxSearch(dept-1)
+          score+=(newScore*p)
+        }}
+      })
+      score/=cells.length
+      return score
+    }
+  }
+
   def search(dept: Int, alpha: Double, beta: Double): (Grid.Direct, Double) = {
     var bestScore: Double = 0
     var bestMove: Grid.Direct = Grid.NONE
@@ -57,7 +118,7 @@ class AI(var d: Grid) {
     } else {
       // 该电脑选择放入数字
       bestScore = beta
-      var badScore = 100000.0;
+      var badScore = 100000.0
       var badCells = ListBuffer[((Int, Int), Int)]()
       List(2, 4).foreach(value => {
         grid.availableCells().foreach(cell => {
@@ -88,7 +149,8 @@ class AI(var d: Grid) {
   }
 
   def getBest(): (Grid.Direct, Double) = {
-    iterativeDeep()
+   iterativeDeep()
+      //expectimaxSearchBest(6)
   }
 
   def iterativeDeep(): (Grid.Direct, Double) = {
@@ -100,7 +162,7 @@ class AI(var d: Grid) {
 
     loop.breakable {
       do {
-        var newBest = search(dept, -10000, 10000)
+        val newBest = search(dept, -10000, 10000)
         if (newBest._1 == Grid.NONE) {
           loop.break
         }

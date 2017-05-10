@@ -202,6 +202,27 @@ class Grid(val k: String, val p: Boolean, val s: Int, var d: Array[Array[Int]]) 
     smoothness
   }
 
+  // 通过模型评分
+  def modelScore():Double={
+    var score=0
+    var penalty=0
+    for (x <- 0 to 3; y <- 0 to 3) {
+      val value=data(x)(y)
+      if(value!=0){
+        score+=(value*value*Grid.priority(x)(y))
+
+        Grid.directs.foreach( d =>{
+          val v=Grid.vectors(d)
+          val position=(x+v._1,y+v._2)
+          if(withinBounds(position)&&data(position._1)(position._2)!=0){
+            penalty+=math.abs(data(position._1)(position._2)-value)
+          }
+        })
+      }
+    }
+    score-penalty
+  }
+
   // 计算局面单调性
   def monotonicity(): Double = {
     var result = Array(0.0, 0.0, 0.0, 0.0)
@@ -342,6 +363,13 @@ object Grid extends Enumeration {
     RIGHT -> (1, 0),
     DOWN -> (0, 1),
     LEFT -> (-1, 0)
+  )
+
+  val priority=Array(
+    Array(6,5,4,1),
+    Array(5,4,1,0),
+    Array(4,1,0,-1),
+    Array(1,0,-1,-2)
   )
 
   def apply(k: String, p: Boolean, s: Int, d: Array[Array[Int]]) = new Grid(k, p, s, d)
