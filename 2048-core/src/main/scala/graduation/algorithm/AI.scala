@@ -5,7 +5,9 @@ import java.util.Date
 import graduation.models.Grid
 import org.apache.spark.mllib.classification.LogisticRegressionModel
 
+import scala.collection.immutable.TreeMap
 import scala.collection.mutable.ListBuffer
+import scala.util.Random
 
 /**
   * Created by wendell on 21/4/2017.
@@ -31,23 +33,25 @@ class AI(var d: Grid) {
     grid.modelScore()
   }
 
-  def expectimaxSearchBest(dept:Int): (Grid.Direct,Double) ={
-    var score = Double.MinValue;
-    var bestMove = Grid.NONE;
+  def expectimaxSearchBest(dept:Int): (List[(Grid.Direct,Double)]) ={
+//    var score = Double.MinValue;
+//    var bestMove = Grid.NONE;
+    var scoreList=ListBuffer[(Grid.Direct,Double)]()
 
     for (d <- Grid.directs) {
       var newGrid = grid.clone();
       newGrid.playerTurn=false
       if(newGrid.move(d)){
-        var newScore = AI(newGrid).expectimaxSearch(dept - 1)
-
-        if (newScore > score) {
-          bestMove = d
-          score = newScore
-        }
+        val newScore = AI(newGrid).expectimaxSearch(dept - 1)
+        scoreList+=((d,newScore))
+//        if (newScore >= score) {
+//          bestMove = d
+//          score = newScore
+//        }
       }
     }
-    (bestMove,score)
+    scoreList.toList.sortBy(-_._2)
+    //(bestMove,score)
   }
 
   def expectimaxSearch(dept:Int):Double={
@@ -74,7 +78,7 @@ class AI(var d: Grid) {
       var score:Double=0
       val cells=grid.availableCells()
       cells.foreach(cell => {
-        Map(2 -> 0.9,4 -> 0.1).foreach{case (value,p)=>{
+        Map(2 -> 0.9,4->0.1).foreach{case (value,p)=>{
           val newGrid=grid.clone()
           newGrid.playerTurn=true
           newGrid.setCell(cell,value)
@@ -102,7 +106,7 @@ class AI(var d: Grid) {
           val newAI = AI(newGrid)
           // 深度为0，返回此时最好的中间局
           if (dept == 0) {
-            result = (bestMove, newAI.eval())
+            result = (bestMove, newAI.grid.modelScore())
           } else {
             result = newAI.search(dept - 1, bestScore, beta)
           }
@@ -123,7 +127,8 @@ class AI(var d: Grid) {
       List(2, 4).foreach(value => {
         grid.availableCells().foreach(cell => {
           grid.setCell(cell, value)
-          val score = grid.smoothness() + grid.islands()
+//          val score = grid.smoothness() + grid.islands()
+          val score = 0-grid.modelScore()
           if (score < badScore) {
             badScore = score
             badCells = ListBuffer((cell, value))
@@ -149,8 +154,10 @@ class AI(var d: Grid) {
   }
 
   def getBest(): (Grid.Direct, Double) = {
-   iterativeDeep()
-      //expectimaxSearchBest(6)
+   //iterativeDeep()
+   val scoreList=expectimaxSearchBest(6)
+    scoreList(0)
+
   }
 
   def iterativeDeep(): (Grid.Direct, Double) = {

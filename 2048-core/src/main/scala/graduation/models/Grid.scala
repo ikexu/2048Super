@@ -4,6 +4,7 @@ import argonaut.Argonaut._
 import argonaut._
 
 import scala.collection.mutable.ArrayBuffer
+import scala.util.control.Breaks
 import scala.util.control.Breaks._
 
 /**
@@ -204,23 +205,68 @@ class Grid(val k: String, val p: Boolean, val s: Int, var d: Array[Array[Int]]) 
 
   // 通过模型评分
   def modelScore():Double={
-    var score=0
-    var penalty=0
+    var scoreArray=new Array[Int](24)
+    //var (score1,score2,score3,penalty)=(0.0,0.0,0.0,0.0)
     for (x <- 0 to 3; y <- 0 to 3) {
       val value=data(x)(y)
       if(value!=0){
-        score+=(value*value*Grid.priority(x)(y))
+        // model1 score
+        scoreArray(0)+=(value*Grid.model1(x)(y))
+        scoreArray(1)+=(value*Grid.model1(x)(3-y))
 
-        Grid.directs.foreach( d =>{
-          val v=Grid.vectors(d)
-          val position=(x+v._1,y+v._2)
-          if(withinBounds(position)&&data(position._1)(position._2)!=0){
-            penalty+=math.abs(data(position._1)(position._2)-value)
-          }
-        })
+        scoreArray(2)+=(value*Grid.model1(y)(x))
+        scoreArray(3)+=(value*Grid.model1(3-y)(x))
+
+        scoreArray(4)+=(value*Grid.model1(3-x)(3-y))
+        scoreArray(5)+=(value*Grid.model1(3-x)(y))
+
+        scoreArray(6)+=(value*Grid.model1(y)(3-x))
+        scoreArray(7)+=(value*Grid.model1(3-y)(3-x))
+
+        // model2 score
+        scoreArray(8)+=(value*Grid.model2(x)(y))
+        scoreArray(9)+=(value*Grid.model2(x)(3-y))
+
+        scoreArray(10)+=(value*Grid.model2(y)(x))
+        scoreArray(11)+=(value*Grid.model2(3-y)(x))
+
+        scoreArray(12)+=(value*Grid.model2(3-x)(3-y))
+        scoreArray(13)+=(value*Grid.model2(3-x)(y))
+
+        scoreArray(14)+=(value*Grid.model2(y)(3-x))
+        scoreArray(15)+=(value*Grid.model2(3-y)(3-x))
+
+        //// model3 score
+        scoreArray(16)+=(value*Grid.model3(x)(y))
+        scoreArray(17)+=(value*Grid.model3(x)(3-y))
+
+        scoreArray(18)+=(value*Grid.model3(y)(x))
+        scoreArray(19)+=(value*Grid.model3(3-y)(x))
+
+        scoreArray(20)+=(value*Grid.model3(3-x)(3-y))
+        scoreArray(21)+=(value*Grid.model3(3-x)(y))
+
+        scoreArray(22)+=(value*Grid.model3(y)(3-x))
+        scoreArray(23)+=(value*Grid.model3(3-y)(3-x))
+
       }
     }
-    score-penalty
+//    if(maxValue()>=2048) {
+//      val loop = new Breaks
+//      loop.breakable {
+//        Grid.directs.foreach(d => {
+//          val newGrid = this.clone()
+//          if (newGrid.move(d)) {
+//            val (m1, m2) = newGrid.max2Value()
+//            penalty = m1 + m2 - newGrid.data(0)(0) - newGrid.data(0)(1)
+//            if (penalty == 0) {
+//              loop.break
+//            }
+//          }
+//        })
+//      }
+//    }
+    scoreArray.max
   }
 
   // 计算局面单调性
@@ -338,6 +384,20 @@ class Grid(val k: String, val p: Boolean, val s: Int, var d: Array[Array[Int]]) 
     mValue
   }
 
+  // 局面中最大的值
+  def max2Value(): (Int,Int) = {
+    var (m1,m2)=(0,0)
+    for (x <- 0 to 3; y <- 0 to 3) {
+      val v=data(x)(y)
+      if(v>m1){
+        m1=v
+      }else if(v>m2){
+        m2=v
+      }
+    }
+    (m1,m2)
+  }
+
   override def toString: String = {
     val str = new StringBuilder
     data.foreach { row =>
@@ -365,12 +425,40 @@ object Grid extends Enumeration {
     LEFT -> (-1, 0)
   )
 
-  val priority=Array(
-    Array(6,5,4,1),
-    Array(5,4,1,0),
-    Array(4,1,0,-1),
-    Array(1,0,-1,-2)
+//  val model1=Array(
+//    Array(6,5,4,1),
+//    Array(5,4,1,0),
+//    Array(4,1,0,-1),
+//    Array(1,0,-1,-2)
+//  )
+
+  val model1=Array(
+    Array(16,15,14,13),
+    Array(9,10,11,12),
+    Array(8,7,6,5),
+    Array(1,2,3,4)
   )
+
+  val model2=Array(
+    Array(16,15,12,4),
+    Array(14,13,11,3),
+    Array(10,9,8,2),
+    Array(7,6,5,1)
+  )
+
+  val model3=Array(
+    Array(16,15,14,4),
+    Array(13,12,11,3),
+    Array(10,9,8,2),
+    Array(7,6,5,1)
+  )
+
+//  val model3=Array(
+//      Array(16,15,14,4),
+//      Array(13,12,11,3),
+//      Array(10,9,8,2),
+//      Array(7,6,5,1)
+//    )
 
   def apply(k: String, p: Boolean, s: Int, d: Array[Array[Int]]) = new Grid(k, p, s, d)
 

@@ -11,20 +11,23 @@ object debug {
 
 
   def main(args: Array[String]): Unit = {
+
+    //4096 2048 8,128 256 32 16,32 64 128 2,2 4 32 2
    val jsonStr1 =
       """
         |{"data":
         |[
-        |[128,2,2,2],
-        |[32,16,32,8],
-        |[16,4,4,4],
-        |[4,2,2,2]
+        |[2,4096,2048,8],
+        |[128,256,32,16],
+        |[32,64,128,2],
+        |[2,4,32,2]
         |],
         |"step":10,
         |"playerTurn":true,
         |"key":"test"
         |}""".stripMargin
     val grid1 = jsonStr1.decodeOption[Grid].get
+    //moveTest(grid1)
     AITest(grid1)
 
    /* val jsonStr2 =

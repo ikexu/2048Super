@@ -17,7 +17,7 @@ object JsonUtil {
         |{"data":
         |[
         |[2,2,4,4],
-        |[0,0,0,4],
+        |[0,0,64,4],
         |[8,2,64,8],
         |[4,0,4,0]
         |],
@@ -37,8 +37,8 @@ object JsonUtil {
     val newGrid=grid.clone()
     println(newGrid.data+" "+newGrid)*/
 
-    println(grid.move(Grid.RIGHT))
-    grid.data.foreach(i => println(i.mkString(" ")))
+
+    println(grid.max2Value())
 
 
   }
