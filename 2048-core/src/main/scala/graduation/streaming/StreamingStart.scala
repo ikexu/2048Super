@@ -22,7 +22,8 @@ object StreamingStart {
     AI.maxWeight = CoreEnv.maxWeight
     AI.monoWeight = CoreEnv.monoWeight
     AI.smoothWeight = CoreEnv.smoothWeight
-    AI.seachDepth = CoreEnv.seachDepth
+    AI.seachDepthLow = CoreEnv.seachDepthLow
+    AI.seachDepthHigh = CoreEnv.seachDepthHigh
     AI.mlEnableStep =CoreEnv.mlEnableStep
     AI.mlEnadbleWeightThreshold=CoreEnv.mlEnadbleWeightThreshold
     AI.useOfflineAnalysis = CoreEnv.useOfflineAnalysis
