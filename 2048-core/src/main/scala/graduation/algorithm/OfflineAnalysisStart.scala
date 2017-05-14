@@ -6,6 +6,8 @@ import breeze.linalg.DenseMatrix
 import com.mongodb.spark.MongoSpark
 import com.mongodb.spark.config.{ReadConfig, _}
 import graduation.util.{Constant, CoreCommon, CoreEnv, MatrixUtil}
+import org.apache.hadoop.fs.{FileSystem, Path}
+import org.apache.hadoop.conf.Configuration
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithLBFGS}
 import org.apache.spark.mllib.evaluation.MulticlassMetrics
@@ -39,9 +41,13 @@ object OfflineAnalysisStart {
     val model=train(spark,readConfig)
 
     //模型保存
+    val fs=FileSystem.get(new Configuration())
+    val savePath=new Path(CoreEnv.modelSavePath)
+    if(fs.exists(savePath)){
+      fs.delete(savePath,true)
+    }
 
     model.save(spark, CoreEnv.modelSavePath)
-
 
   }
 

@@ -17,7 +17,7 @@ object CoreCommon {
     */
   def instanceSpark(master: String, conf: Array[(String, String)] = Array.empty[(String, String)]): SparkContext = {
 
-    val sparkConf = new SparkConf().setAppName(CoreEnv.coreAppName).setMaster(master)
+    val sparkConf = new SparkConf().setAppName(CoreEnv.coreAppName)//.setMaster(master)
 
     conf.foreach { case (k, v) =>
       sparkConf.set(k, v)
