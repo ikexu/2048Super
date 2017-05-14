@@ -4,9 +4,10 @@ import java.util
 
 import breeze.linalg.DenseMatrix
 import com.mongodb.spark.MongoSpark
-import com.mongodb.spark.config._
+import com.mongodb.spark.config.{ReadConfig, _}
 import graduation.util.{Constant, CoreCommon, CoreEnv, MatrixUtil}
-import org.apache.spark.mllib.classification.LogisticRegressionWithLBFGS
+import org.apache.spark.SparkContext
+import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithLBFGS}
 import org.apache.spark.mllib.evaluation.MulticlassMetrics
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
@@ -34,8 +35,19 @@ object OfflineAnalysisStart {
     val spark = CoreCommon.instanceSpark(CoreEnv.master, conf)
     val readConfig = ReadConfig(
       Map.empty[String, String], Some(ReadConfig(spark)))
-    val mongodbRdd = MongoSpark.load(spark, readConfig)
 
+    val model=train(spark,readConfig)
+
+    //模型保存
+
+    model.save(spark, CoreEnv.modelSavePath)
+
+
+  }
+
+  def train(spark:SparkContext,readConfig:ReadConfig):LogisticRegressionModel = {
+    val mongodbRdd = MongoSpark.load(spark, readConfig)
+    println(mongodbRdd.count())
     val baseData = mongodbRdd.map { doc =>
       try {
         val grid = doc.get("grid").asInstanceOf[util.ArrayList[util.ArrayList[util.ArrayList[Int]]]].asScala
@@ -47,7 +59,6 @@ object OfflineAnalysisStart {
         (convert.data.mkString(" "), doc.get("score").asInstanceOf[Int])
       } catch {
         case e: Throwable =>
-          println(e.getMessage)
           null
       }
     }.filter(_ != null) //.foreach(println(_))
@@ -59,7 +70,7 @@ object OfflineAnalysisStart {
       val point = LabeledPoint.parse(parses)
       point
     }
-    analysisData.foreach(println(_))
+    //analysisData.foreach(println(_))
 
     var training: RDD[LabeledPoint] = null
     var test: RDD[LabeledPoint] = null
@@ -81,11 +92,6 @@ object OfflineAnalysisStart {
     val metrics = new MulticlassMetrics(predictionAndLabels)
     val precision = metrics.precision
     println("Precision=" + precision)
-
-    //模型保存
-    model.save(spark, CoreEnv.modelSavePath)
-
-
+    model
   }
-
 }
