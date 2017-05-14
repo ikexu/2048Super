@@ -24,9 +24,9 @@ object CoreEnv extends Serializable{
   var emptyWeight: Double = Constant.getDouble("emptyWeight").getOrElse(2.7)
   var maxWeight: Double = Constant.getDouble("maxWeight").getOrElse(1.0)
   var httpPostUri:String = Constant.getString("httpPostUri").get
-  val seachDepth:Int =Constant.getInt("searchDepth").getOrElse(6)
+  val seachDepthLow:Int =Constant.getInt("searchDepthLow").getOrElse(4)
+  val seachDepthHigh:Int =Constant.getInt("searchDepthHigh").getOrElse(6)
   val mlEnableStep:Int=Constant.getInt("mlEnableStep").getOrElse(50)
   val mlEnadbleWeightThreshold:Double=Constant.getDouble("mlEnadbleWeightThreshold").getOrElse(0.05)
   val startStreamingWithTrainModel:Boolean = Constant.getBoolean("startStreamingWithTrainModel").getOrElse(true)
-
 }

@@ -156,8 +156,14 @@ class AI(var d: Grid) {
   }
 
   def getBest(): (Grid.Direct, Double) = {
-   //iterativeDeep()
-   val scoreList=expectimaxSearchBest(AI.seachDepth)
+   //iterativeDeep
+    var scoreList=List[(Grid.Direct,Double)]()
+    if(grid.maxValue()<2048){
+      scoreList=expectimaxSearchBest(AI.seachDepthLow)
+    }else{
+      scoreList=expectimaxSearchBest(AI.seachDepthHigh)
+    }
+   //val scoreList=expectimaxSearchBest(AI.seachDepth)
     if(scoreList.isEmpty){
       return (Grid.NONE,0)
     }
@@ -224,7 +230,8 @@ object AI extends Serializable{
   val badLabel:Double =0.0
   var mlEnableStep:Int =_
   var mlEnadbleWeightThreshold:Double=_
-  var seachDepth:Int=_
+  var seachDepthLow:Int=_
+  var seachDepthHigh:Int=_
   var searchTimeOut: Int = _
   var smoothWeight: Double = _
   var monoWeight: Double = _
