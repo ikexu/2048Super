@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"io/ioutil"
 )
 
@@ -25,7 +26,12 @@ type mongoConfig struct {
 }
 
 func init() {
-	file, err := ioutil.ReadFile("config.json")
+	var configPath = flag.String("f", "config.json", "config file path")
+	var kafkaUrl = flag.String("k", "", "kafka url")
+	var mongoDBUrl = flag.String("m", "", "mongodb url")
+	flag.Parse()
+
+	file, err := ioutil.ReadFile(*configPath)
 	if err != nil {
 		panic("Make sure 'config.json' file exists!")
 	}
@@ -34,4 +40,12 @@ func init() {
 	if err != nil {
 		panic("Make sure config file correct!")
 	}
+	if len(*kafkaUrl) > 0 {
+		conf.Kafka = *kafkaUrl
+	}
+
+	if len(*mongoDBUrl) > 0 {
+		conf.Mongodb.Host = *mongoDBUrl
+	}
+
 }

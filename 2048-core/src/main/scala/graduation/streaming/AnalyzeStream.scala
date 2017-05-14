@@ -36,7 +36,7 @@ object AnalyzeStream extends Analyze {
       val result = Result(kv._1, bestDiret._1).asJson.toString()
       logger.info(s"return message[${kv._1}] -> [result:${result}]")
       //kafkaProducer.sendMessageToKafka(kv._1, result)
-      val response=new HttpUtil().sendPost(result)
+      val response=HttpUtil.sendPost(CoreEnv.httpPostUri,result)
       logger.info(s"success post message[${kv._1}] ${response.code}")
     } catch {
       case e:Throwable => logger.error(s"analyze message[${kv._1}] error:",e)

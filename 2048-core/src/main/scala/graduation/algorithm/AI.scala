@@ -1,6 +1,5 @@
 package graduation.algorithm
 
-import java.util.Date
 
 import graduation.models.Grid
 import org.apache.spark.mllib.classification.LogisticRegressionModel
@@ -161,24 +160,25 @@ class AI(var d: Grid) {
   }
 
   def iterativeDeep(): (Grid.Direct, Double) = {
-    val start = System.currentTimeMillis()
-    var dept = 0
-    var best: (Grid.Direct, Double) = null
-    import scala.util.control.Breaks
-    val loop = new Breaks
+        val start = System.currentTimeMillis()
+        var dept = 0
+        var best: (Grid.Direct, Double) = null
+        import scala.util.control.Breaks
+        val loop = new Breaks
 
-    loop.breakable {
-      do {
-        val newBest = search(dept, -10000, 10000)
-        if (newBest._1 == Grid.NONE) {
-          loop.break
+        loop.breakable {
+          do {
+            val newBest = search(dept, -10000, 10000)
+            if (newBest._1 == Grid.NONE) {
+              loop.break
+            }
+            best = newBest
+            dept += 1
+          } while (System.currentTimeMillis() - start < AI.searchTimeOut)
+          //} while (dept<=2)
         }
-        best = newBest
-        dept += 1
-      } while (System.currentTimeMillis() - start < AI.searchTimeOut)
-      //} while (dept<=2)
-    }
-    best
+        best
+    //search(6, -10000, 10000)
   }
 
 }

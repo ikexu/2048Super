@@ -206,10 +206,12 @@ class Grid(val k: String, val p: Boolean, val s: Int, var d: Array[Array[Int]]) 
   // 通过模型评分
   def modelScore():Double={
     var scoreArray=new Array[Int](24)
+    var (penalty,add)=(0,0)
     //var (score1,score2,score3,penalty)=(0.0,0.0,0.0,0.0)
     for (x <- 0 to 3; y <- 0 to 3) {
       val value=data(x)(y)
       if(value!=0){
+        add+=value
         // model1 score
         scoreArray(0)+=(value*Grid.model1(x)(y))
         scoreArray(1)+=(value*Grid.model1(x)(3-y))
@@ -249,6 +251,14 @@ class Grid(val k: String, val p: Boolean, val s: Int, var d: Array[Array[Int]]) 
         scoreArray(22)+=(value*Grid.model3(y)(3-x))
         scoreArray(23)+=(value*Grid.model3(3-y)(3-x))
 
+        Grid.directs.foreach(d=>{
+          val v=Grid.vectors(d)
+          val p=(x+v._1,y+v._2)
+          if(withinBounds(p)){
+            penalty+=math.abs(data(p._1)(p._2)-data(x)(y))
+          }
+        })
+
       }
     }
 //    if(maxValue()>=2048) {
@@ -266,7 +276,10 @@ class Grid(val k: String, val p: Boolean, val s: Int, var d: Array[Array[Int]]) 
 //        })
 //      }
 //    }
-    scoreArray.max
+    if(maxValue()>=4096){
+      penalty-=add
+    }
+    scoreArray.max-penalty
   }
 
   // 计算局面单调性
