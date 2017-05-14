@@ -25,6 +25,8 @@ object StreamingStart {
     AI.seachDepth = CoreEnv.seachDepth
     AI.mlEnableStep =CoreEnv.mlEnableStep
     AI.mlEnadbleWeightThreshold=CoreEnv.mlEnadbleWeightThreshold
+    AI.useOfflineAnalysis = CoreEnv.useOfflineAnalysis
+    AnalyzeStream.httpPostUri=CoreEnv.httpPostUri
   }
 
   def main(args: Array[String]): Unit = {
@@ -39,27 +41,32 @@ object StreamingStart {
       ("spark.mongodb.input.readPreference.name", CoreEnv.sparkMongodbInputReadPreference)
     )
     val spark = CoreCommon.instanceSpark(CoreEnv.master,conf)
+    logger.info("Start application:"+spark.applicationId)
     var model:LogisticRegressionModel=null
-    if(CoreEnv.startStreamingWithTrainModel){
-      logger.info("训练离线模型LogisticRegressionModel")
-      val readConfig = ReadConfig(
-        Map.empty[String, String], Some(ReadConfig(spark)))
-      model = OfflineAnalysisStart.train(spark,readConfig)
-    } else {
-      logger.info(s"加载离线模型LogisticRegressionModel by path:${CoreEnv.modelSavePath}")
-      model = LogisticRegressionModel.load(spark,CoreEnv.modelSavePath)
+    if(CoreEnv.useOfflineAnalysis){
+      if(CoreEnv.startStreamingWithTrainModel){
+        logger.info("训练离线模型LogisticRegressionModel")
+        val readConfig = ReadConfig(
+          Map.empty[String, String], Some(ReadConfig(spark)))
+        model = OfflineAnalysisStart.train(spark,readConfig)
+      } else {
+        logger.info(s"加载离线模型LogisticRegressionModel by path:${CoreEnv.modelSavePath}")
+        model = LogisticRegressionModel.load(spark,CoreEnv.modelSavePath)
+      }
+      AI.model=model
     }
-    AI.model=model
+
     logger.info("Create LogisticRegressionModel instance successful!")
     logger.info("Start 2048Super Core-Streaming...")
     val ssc: StreamingContext = CoreCommon.instanceStreaming(spark, CoreEnv.streamingDurationMs)
+    val kafkaBroker:String = CoreEnv.kafkaBroker
     val kafkaParams: Map[String, String] = Map(
-      "metadata.broker.list" -> CoreEnv.kafkaBroker
+      "metadata.broker.list" -> kafkaBroker
       //"serializer.class" -> "kafka.serializer.StringEncoder"
     )
-
+    val kafkaTopic:String = CoreEnv.computerTopic
     val topics: Set[String] = Set(
-      CoreEnv.computerTopic
+      kafkaTopic
     )
 
     val ks = new KafkaStream(kafkaParams, topics)

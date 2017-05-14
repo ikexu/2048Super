@@ -68,7 +68,7 @@ object OfflineAnalysisStart {
           null
       }
     }.filter(_ != null) //.foreach(println(_))
-
+    println(baseData.count())
     val excellent = CoreEnv.excellentThreshold
     val analysisData: RDD[LabeledPoint] = baseData.map { data =>
       val lable = if (data._2 > excellent) 1 else 0

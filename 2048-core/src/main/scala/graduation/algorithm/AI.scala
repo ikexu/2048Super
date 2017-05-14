@@ -3,7 +3,7 @@ package graduation.algorithm
 
 import breeze.linalg.DenseMatrix
 import graduation.models.Grid
-import graduation.util.MatrixUtil
+import graduation.util.{CoreEnv, MatrixUtil}
 import org.apache.spark.mllib.classification.LogisticRegressionModel
 import org.apache.spark.mllib.linalg.Vectors
 
@@ -14,7 +14,7 @@ import scala.util.Random
 /**
   * Created by wendell on 21/4/2017.
   */
-class AI(var d: Grid) {
+class AI(var d: Grid) extends Serializable{
   var grid = d;
 
   // 评价该局面的评分
@@ -162,7 +162,7 @@ class AI(var d: Grid) {
       return (Grid.NONE,0)
     }
 
-    if(scoreList.length == 1){
+    if(scoreList.length == 1 || AI.useOfflineAnalysis == false){
       scoreList.head
     }else if (grid.step >= AI.mlEnableStep && (scoreList(0)._2-scoreList(1)._2) <= AI.mlEnadbleWeightThreshold){
       try {
@@ -231,6 +231,7 @@ object AI extends Serializable{
   var emptyWeight: Double = _
   var maxWeight: Double = _
   var model: LogisticRegressionModel = _
+  var useOfflineAnalysis:Boolean = _
 
   def apply(g: Grid) = new AI(g)
 }

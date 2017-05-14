@@ -28,5 +28,6 @@ object CoreEnv extends Serializable{
   val mlEnableStep:Int=Constant.getInt("mlEnableStep").getOrElse(50)
   val mlEnadbleWeightThreshold:Double=Constant.getDouble("mlEnadbleWeightThreshold").getOrElse(0.05)
   val startStreamingWithTrainModel:Boolean = Constant.getBoolean("startStreamingWithTrainModel").getOrElse(true)
+  val useOfflineAnalysis:Boolean = Constant.getBoolean("useOfflineAnalysis").getOrElse(true)
 
 }

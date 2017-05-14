@@ -17,7 +17,8 @@ import org.slf4j.LoggerFactory
 object AnalyzeStream extends Analyze {
 
   private val logger = LoggerFactory.getLogger(AnalyzeStream.getClass)
-  val kafkaProducer = new KafkaProducer(CoreEnv.kafkaBroker, CoreEnv.returnTopic)
+  var httpPostUri:String =_
+ // val kafkaProducer = new KafkaProducer(CoreEnv.kafkaBroker, CoreEnv.returnTopic)
 
   override def analyzeStream(stream: InputDStream[(String, String)]): Unit = {
     transform(stream).foreachRDD { rdd =>
@@ -36,7 +37,7 @@ object AnalyzeStream extends Analyze {
       val result = Result(kv._1, bestDiret._1).asJson.toString()
       logger.info(s"return message[${kv._1}] -> [result:${result}]")
       //kafkaProducer.sendMessageToKafka(kv._1, result)
-      val response=HttpUtil.sendPost(CoreEnv.httpPostUri,result)
+      val response=HttpUtil.sendPost(httpPostUri,result)
       logger.info(s"success post message[${kv._1}] ${response.code}")
     } catch {
       case e:Throwable => logger.error(s"analyze message[${kv._1}] error:",e)
