@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory
   */
 object AnalyzeStream extends Analyze {
 
-  private val logger = LoggerFactory.getLogger(StreamingStart.getClass)
+  private val logger = LoggerFactory.getLogger(AnalyzeStream.getClass)
   val kafkaProducer = new KafkaProducer(CoreEnv.kafkaBroker, CoreEnv.returnTopic)
 
   override def analyzeStream(stream: InputDStream[(String, String)]): Unit = {

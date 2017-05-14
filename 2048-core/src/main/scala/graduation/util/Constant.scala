@@ -66,6 +66,15 @@ object Constant {
     }
   }
 
+  def getBoolean(key:String):Option[Boolean] = {
+    val value = prop.getProperty(key)
+    if (value == null) {
+      None
+    } else {
+      Some(value.toBoolean)
+    }
+  }
+
   def main(args: Array[String]): Unit = {
 
     ConstantInit()

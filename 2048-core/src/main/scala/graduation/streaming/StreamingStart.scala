@@ -1,6 +1,7 @@
 package graduation.streaming
 
-import graduation.algorithm.AI
+import com.mongodb.spark.config.ReadConfig
+import graduation.algorithm.{AI, OfflineAnalysisStart}
 import graduation.util.{Constant, CoreCommon, CoreEnv}
 import org.apache.spark.mllib.classification.LogisticRegressionModel
 import org.apache.spark.streaming.StreamingContext
@@ -21,22 +22,37 @@ object StreamingStart {
     AI.maxWeight = CoreEnv.maxWeight
     AI.monoWeight = CoreEnv.monoWeight
     AI.smoothWeight = CoreEnv.smoothWeight
+    AI.seachDepth = CoreEnv.seachDepth
+    AI.mlEnableStep =CoreEnv.mlEnableStep
+    AI.mlEnadbleWeightThreshold=CoreEnv.mlEnadbleWeightThreshold
   }
 
   def main(args: Array[String]): Unit = {
 
     logger.info("开始初始化2048Super-Core.")
     init()
-    logger.info("启动Streaming实例...")
-    val spark = CoreCommon.instanceSpark(CoreEnv.master)
+    logger.info("启动spark实例...")
+    val conf = Array(
+      ("spark.mongodb.input.uri", CoreEnv.sparkMongodbInputUri),
+      ("spark.mongodb.input.database", CoreEnv.sparkMongodbInputDatabase),
+      ("spark.mongodb.input.collection", CoreEnv.sparkMongodbInputCollection),
+      ("spark.mongodb.input.readPreference.name", CoreEnv.sparkMongodbInputReadPreference)
+    )
+    val spark = CoreCommon.instanceSpark(CoreEnv.master,conf)
+    var model:LogisticRegressionModel=null
+    if(CoreEnv.startStreamingWithTrainModel){
+      logger.info("训练离线模型LogisticRegressionModel")
+      val readConfig = ReadConfig(
+        Map.empty[String, String], Some(ReadConfig(spark)))
+      model = OfflineAnalysisStart.train(spark,readConfig)
+    } else {
+      logger.info(s"加载离线模型LogisticRegressionModel by path:${CoreEnv.modelSavePath}")
+      model = LogisticRegressionModel.load(spark,CoreEnv.modelSavePath)
+    }
+    AI.model=model
+    logger.info("Create LogisticRegressionModel instance successful!")
+    logger.info("Start 2048Super Core-Streaming...")
     val ssc: StreamingContext = CoreCommon.instanceStreaming(spark, CoreEnv.streamingDurationMs)
-
-
-    /*//加载离线模型
-    logger.info(s"加载离线模型:LogisticRegressionModel->${CoreEnv.modelSavePath}")
-    val newModel = LogisticRegressionModel.load(spark, CoreEnv.modelSavePath)
-    AI.model=newModel
-    */
     val kafkaParams: Map[String, String] = Map(
       "metadata.broker.list" -> CoreEnv.kafkaBroker
       //"serializer.class" -> "kafka.serializer.StringEncoder"
@@ -47,12 +63,9 @@ object StreamingStart {
     )
 
     val ks = new KafkaStream(kafkaParams, topics)
-
     val stream = ks.createStringStream(ssc)
-
     //分析
     AnalyzeStream.analyzeStream(stream)
-
     ssc.start()
     ssc.awaitTermination()
 

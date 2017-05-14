@@ -2,8 +2,11 @@ package graduation.algorithm
 
 import java.util.Date
 
+import breeze.linalg.DenseMatrix
 import graduation.models.Grid
+import graduation.util.MatrixUtil
 import org.apache.spark.mllib.classification.LogisticRegressionModel
+import org.apache.spark.mllib.linalg.Vectors
 
 import scala.collection.immutable.TreeMap
 import scala.collection.mutable.ListBuffer
@@ -155,9 +158,42 @@ class AI(var d: Grid) {
 
   def getBest(): (Grid.Direct, Double) = {
    //iterativeDeep()
-   val scoreList=expectimaxSearchBest(6)
-    scoreList(0)
+   val scoreList=expectimaxSearchBest(AI.seachDepth)
+    if(scoreList.isEmpty){
+      return (Grid.NONE,0)
+    }
 
+    if(scoreList.length == 1){
+      scoreList.head
+    }else if (grid.step >= AI.mlEnableStep && (scoreList(0)._2-scoreList(1)._2) <= AI.mlEnadbleWeightThreshold){
+      try {
+        val direct1=scoreList(0)._1
+        val grid1=grid.clone()
+        grid1.move(direct1)
+        val headMatrix=DenseMatrix(grid.data.map(i =>
+          Tuple4(i(0).toDouble, i(1).toDouble, i(2).toDouble, i(3).toDouble)):_*)
+        val lastMatrix=DenseMatrix(grid1.data.map(i =>
+          Tuple4(i(0).toDouble, i(1).toDouble, i(2).toDouble, i(3).toDouble)):_*)
+
+        val convert = MatrixUtil.convertMatrix(headMatrix, lastMatrix)
+        val features = Vectors.dense(convert.data.mkString(" ").trim().split(' ').map(java.lang.Double.parseDouble))
+        val result=AI.model.predict(features)
+        if(result.equals(AI.goodLabel)){
+          println(s"${grid.key} use LogisticRegressionModel  predict goodlabel")
+          scoreList(0)
+        } else if (result.equals(AI.badLabel)) {
+          println(s"${grid.key} use LogisticRegressionModel  predict badLabel")
+          scoreList(1)
+        } else {
+          scoreList.head
+        }
+      } catch {
+        case e=>
+          scoreList.head
+      }
+    } else {
+      scoreList.head
+    }
   }
 
   def iterativeDeep(): (Grid.Direct, Double) = {
@@ -183,7 +219,12 @@ class AI(var d: Grid) {
 
 }
 
-object AI {
+object AI extends Serializable{
+  val goodLabel:Double = 1.0
+  val badLabel:Double =0.0
+  var mlEnableStep:Int =_
+  var mlEnadbleWeightThreshold:Double=_
+  var seachDepth:Int=_
   var searchTimeOut: Int = _
   var smoothWeight: Double = _
   var monoWeight: Double = _
