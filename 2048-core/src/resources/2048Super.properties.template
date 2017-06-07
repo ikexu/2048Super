@@ -1,25 +1,26 @@
-#############ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½##############
+#############»ù±¾ÅäÖÃ##############
 kafkaBroker localhost:9092
-coreStreamingCheckPoint .
+coreStreamingCheckPoint null
 master local[*]
 streamingDurationMs 100
 httpPostUri http://localhost:9001/result
 startStreamingWithTrainModel true
 
-#############mongodbï¿½ï¿½ï¿½ï¿½############
-spark.mongodb.input.uri mongodb://139.224.233.204:27017
+#############mongodbÅäÖÃ############
+spark.mongodb.input.uri mongodb://user:passwd@ip:port
 spark.mongodb.input.database 2048
 spark.mongodb.input.collection game_record
 spark.mongodb.input.readPreference.name primaryPreferred
 
-############ï¿½ï¿½ï¿½ß·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½###########
+############ÀëÏß·ÖÎöÅäÖÃ###########
+useOfflineAnalysis false
 excellentThreshold 30000
-modelSavePath file:///..\\..\\..\\..\\model\\w
+modelSavePath hdfs://tmp/model
 mlEnableStep 50
-mlEnadbleWeightThreshold 2
+mlEnadbleWeightThreshold 1
 
-###########ï¿½ï¿½ï¿½ß·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½############
-searchDepthLow 4
+###########ÔÚÏß·ÖÎöÅäÖÃ############
+searchDepthLow 5
 searchDepthHigh 6
 searchTimeOut 100
 smoothWeight 0.1

@@ -7,11 +7,11 @@ import org.slf4j.LoggerFactory
 
 /**
   * Created by KeXu on 2017/4/6.
-  * 加载处理spark-prestat配置文件
+  * 加载处理2048Super配置文件
   */
 object Constant {
 
-  private val conf_File_Name = "2048Super.properties"
+  private val conf_File_Name = "2048Super.properties.template"
   private val logger = LoggerFactory.getLogger(Constant.getClass)
   var prop: Properties = null
 

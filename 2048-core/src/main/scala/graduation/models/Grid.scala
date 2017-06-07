@@ -4,7 +4,6 @@ import argonaut.Argonaut._
 import argonaut._
 
 import scala.collection.mutable.ArrayBuffer
-import scala.util.control.Breaks
 import scala.util.control.Breaks._
 
 /**
@@ -277,7 +276,7 @@ class Grid(val k: String, val p: Boolean, val s: Int, var d: Array[Array[Int]]) 
 //      }
 //    }
     if(maxValue()>=4096){
-      penalty-=add
+      penalty -= add * 2
     }
     scoreArray.max-penalty
   }
