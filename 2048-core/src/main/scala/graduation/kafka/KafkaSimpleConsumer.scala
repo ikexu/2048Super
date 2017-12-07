@@ -4,7 +4,6 @@ import kafka.api.{FetchRequestBuilder, TopicMetadataRequest}
 import kafka.common.TopicAndPartition
 import kafka.consumer.SimpleConsumer
 import kafka.message.ByteBufferMessageSet
-import kafka.utils.ZKStringSerializer
 import org.I0Itec.zkclient.ZkClient
 import org.slf4j.LoggerFactory
 
@@ -172,7 +171,7 @@ class KafkaSimpleConsumer(
 
   def commitOffsetToZookeeper(offset: Long) {
     val dir = "/consumers/" + groupId + "/offsets/" + topic + "/" + partition
-    val zk = new ZkClient(zkQuorum, 30 * 1000, 30 * 1000, ZKStringSerializer)
+    val zk = new ZkClient(zkQuorum, 30 * 1000, 30 * 1000)
     try {
       if (!zk.exists(dir)) {
         zk.createPersistent(dir, true)
@@ -202,7 +201,7 @@ object KafkaSimpleConsumer {
   def getBrokers(zkQuorum: String): Seq[String] = {
     val list = new ArrayBuffer[String]()
     val dir = "/brokers/ids"
-    val zk = new ZkClient(zkQuorum, 30 * 1000, 30 * 1000, ZKStringSerializer)
+    val zk = new ZkClient(zkQuorum, 30 * 1000, 30 * 1000)
     try {
       if (zk.exists(dir)) {
         val ids = zk.getChildren(dir)
@@ -222,7 +221,7 @@ object KafkaSimpleConsumer {
   def getEndOffsetPositionFromZookeeper(groupId: String, zkQuorum: String, topic: String,
                                         partition: Int): Long = {
     val dir = "/consumers/" + groupId + "/offsets/" + topic + "/" + partition
-    val zk = new ZkClient(zkQuorum, 30 * 1000, 30 * 1000, ZKStringSerializer)
+    val zk = new ZkClient(zkQuorum, 30 * 1000, 30 * 1000)
     try {
       if (zk.exists(dir)) {
         val offset = zk.readData[String](dir)
@@ -239,7 +238,7 @@ object KafkaSimpleConsumer {
   def getTopicPartitionList(zkQuorum: String, topic: String): Seq[Int] = {
     val list = new ArrayBuffer[Int]()
     val dir = "/brokers/topics/" + topic + "/partitions"
-    val zk = new ZkClient(zkQuorum, 30 * 1000, 30 * 1000, ZKStringSerializer)
+    val zk = new ZkClient(zkQuorum, 30 * 1000, 30 * 1000)
     try {
       if (zk.exists(dir)) {
         val ids = zk.getChildren(dir)
@@ -253,6 +252,6 @@ object KafkaSimpleConsumer {
     } finally {
       zk.close()
     }
-    list.toSeq
+    list
   }
 }

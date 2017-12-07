@@ -1,12 +1,11 @@
 package graduation.streaming
 
 import argonaut.Argonaut._
-import argonaut._
 import graduation.algorithm.AI
-import graduation.kafka.KafkaProducer
 import graduation.models.Grid._
 import graduation.models.{Grid, Result}
-import graduation.util.{CoreEnv, HttpUtil}
+import graduation.util.HttpUtil
+import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.spark.streaming.dstream.{DStream, InputDStream}
 import org.slf4j.LoggerFactory
 
@@ -20,7 +19,7 @@ object AnalyzeStream extends Analyze {
   var httpPostUri:String =_
  // val kafkaProducer = new KafkaProducer(CoreEnv.kafkaBroker, CoreEnv.returnTopic)
 
-  override def analyzeStream(stream: InputDStream[(String, String)]): Unit = {
+  override def analyzeStream(stream: InputDStream[ConsumerRecord[String, String]]): Unit = {
     transform(stream).foreachRDD { rdd =>
       rdd.foreachPartition(p => {
         p.foreach(record => {
@@ -46,10 +45,10 @@ object AnalyzeStream extends Analyze {
   }
 
 
-  private def transform(stream: InputDStream[(String, String)]): DStream[(String, Grid)] = {
+  private def transform(stream: InputDStream[ConsumerRecord[String, String]]): DStream[(String, Grid)] = {
     stream.transform { rdd =>
       rdd.map { message =>
-        (message._1, message._2.decodeOption[Grid].get)
+        (message.key(), message.value().decodeOption[Grid].get)
       }
     }
   }

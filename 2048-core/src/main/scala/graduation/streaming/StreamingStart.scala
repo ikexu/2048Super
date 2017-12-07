@@ -3,6 +3,7 @@ package graduation.streaming
 import com.mongodb.spark.config.ReadConfig
 import graduation.algorithm.{AI, OfflineAnalysisStart}
 import graduation.util.{Constant, CoreCommon, CoreEnv}
+import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.spark.mllib.classification.LogisticRegressionModel
 import org.apache.spark.streaming.StreamingContext
 import org.slf4j.LoggerFactory
@@ -61,9 +62,10 @@ object StreamingStart {
     logger.info("Start 2048Super Core-Streaming...")
     val ssc: StreamingContext = CoreCommon.instanceStreaming(spark, CoreEnv.streamingDurationMs)
     val kafkaBroker:String = CoreEnv.kafkaBroker
-    val kafkaParams: Map[String, String] = Map(
-      "metadata.broker.list" -> kafkaBroker
-      //"serializer.class" -> "kafka.serializer.StringEncoder"
+    val kafkaParams: Map[String, Object] = Map(
+      "bootstrap.servers" -> kafkaBroker,
+      "key.deserializer" -> classOf[StringDeserializer],
+      "value.deserializer" -> classOf[StringDeserializer]
     )
     val kafkaTopic:String = CoreEnv.computerTopic
     val topics: Set[String] = Set(

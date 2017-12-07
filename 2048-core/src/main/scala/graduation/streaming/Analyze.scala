@@ -1,6 +1,7 @@
 package graduation.streaming
 
 import graduation.models.Grid
+import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.spark.streaming.dstream.InputDStream
 
 /**
@@ -8,7 +9,7 @@ import org.apache.spark.streaming.dstream.InputDStream
   */
 trait Analyze {
 
-  def analyzeStream(stream: InputDStream[(String, String)])
+  def analyzeStream(stream: InputDStream[ConsumerRecord[String, String]])
 
   def analyze(kv: (String, Grid))
 

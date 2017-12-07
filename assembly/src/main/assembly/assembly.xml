@@ -1,0 +1,63 @@
+<assembly>
+    <id>bin</id>
+    <formats>
+        <format>tar.gz</format>
+        <format>dir</format>
+    </formats>
+    <includeBaseDirectory>true</includeBaseDirectory>
+
+    <dependencySets>
+        <dependencySet>
+            <unpack>false</unpack>
+            <scope>runtime</scope>
+            <excludes>
+                <exclude>org.apache.hadoop:*:jar</exclude>
+                <exclude>org.apache.spark:*:jar</exclude>
+            </excludes>
+            <outputDirectory>lib</outputDirectory>
+        </dependencySet>
+    </dependencySets>
+
+    <fileSets>
+        <fileSet>
+            <directory>${project.basedir}/../bin/</directory>
+            <outputDirectory>bin</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+            <fileMode>751</fileMode>
+        </fileSet>
+
+        <fileSet>
+            <directory>${project.basedir}/../2048-core/src/main/resources/</directory>
+            <outputDirectory>conf</outputDirectory>
+            <includes>
+                <include>*.template</include>
+            </includes>
+        </fileSet>
+
+        <fileSet>
+            <directory>${project.basedir}/../2048-proxy/</directory>
+            <outputDirectory>conf</outputDirectory>
+            <includes>
+                <include>*.json</include>
+            </includes>
+        </fileSet>
+
+        <fileSet>
+            <directory>${project.basedir}/../2048-proxy/</directory>
+            <outputDirectory>proxy</outputDirectory>
+            <excludes>
+                <exclude>*.json</exclude>
+            </excludes>
+        </fileSet>
+
+        <fileSet>
+            <directory>${project.basedir}/../2048-index/</directory>
+            <outputDirectory>index</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>
